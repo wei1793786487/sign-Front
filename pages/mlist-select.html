@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>table下拉选择器</title>
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+
+            <blockquote class="layui-elem-quote">
+                请按照模板文件填写,系统将自动识别，并将报名人员与人员库人员自动关联。
+                <a href="../xls/mode.xlsx" class="layui-btn layui-btn-primary">点我下载模板文件</a>
+            </blockquote>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">请选择</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="mid" style="display: none;" id="mid">
+                    <input type="text" name="" placeholder="会议名字" autocomplete="off" class="layui-input" id="demo2">
+                </div>
+
+                <button type="button" class="layui-btn layui-btn-primary" id="test4"><i
+                        class="layui-icon"></i>点我上传人员列表</button>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script>
+        layui.use(['table', 'form', 'tableSelect', 'upload'], function () {
+            var $ = layui.jquery,
+                table = layui.table,
+                form = layui.form,
+                tableSelect = layui.tableSelect,
+                upload = layui.upload;
+
+
+            tableSelect.render({
+                elem: '#demo2',
+                checkedKey: 'id',
+                table: {
+                    url: '../api/tableSelect.json',
+                    cols: [
+                        [{
+                                type: 'radio'
+                            },
+                            {
+                                field: 'id',
+                                title: 'ID'
+                            },
+                            {
+                                field: 'username',
+                                title: '姓名'
+                            },
+                            {
+                                field: 'sex',
+                                title: '性别'
+                            }
+                        ]
+                    ]
+                },
+                done: function (elem, data) {
+                    var NEWJSON = []
+                    layui.each(data.data, function (index, item) {
+                        NEWJSON.push(item.username)
+                    })
+                    elem.val(NEWJSON.join(","))
+                    //将选择的id放入mid里面
+                    $("#mid").val = data["id"];
+                }
+            })
+
+            upload.render({ //允许上传的文件后缀
+                elem: '#test4',
+                url: '/upload/',
+                accept: 'file',
+                exts: 'xlsx|xls',
+                done: function (res) {
+                    console.log(res)
+                },
+                before: function (obj) {
+                    //判断是不选择了要上传的会议
+                    var ischosemeet = $("#mid").val;
+                    if (val === "") {
+                        layer.alert('请先选择会议', {
+                            icon: 2
+                        });
+                    } else {
+                        layer.load(); //上传loading
+                    }
+                },
+                data: {
+                    mid :$("#mid").val
+                }
+
+            });
+
+        });
+    </script>
+</body>
+
+</html>

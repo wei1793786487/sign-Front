@@ -63,7 +63,7 @@
             },
              {
               "title": "会议报名",
-              "href": "pages/mplist.html",
+              "href": "pages/mlist-select.html",
               "icon": "fa fa-group",
               "target": "_self"
             },
