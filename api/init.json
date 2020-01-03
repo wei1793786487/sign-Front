@@ -69,7 +69,7 @@
             },
                {
               "title": "签到管理",
-              "href": "page/welcome-2.html",
+              "href": "pages/sign-m.html",
               "icon": "fa fa-dot-circle-o",
               "target": "_self"
             }
@@ -84,7 +84,7 @@
           "child": [
             {
               "title": "日志管理",
-              "href": "page/404.html",
+              "href": "pages/Journal.html",
               "icon": "fa fa-clock-o",
               "target": "_self"
             }
