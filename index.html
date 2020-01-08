@@ -46,7 +46,7 @@
                 </li>
 
                 <li class="layui-nav-item layuimini-setting">
-                    <a href="javascript:;">小王八</a>
+                    <a href="javascript:;"> <div id="username"></div></a>
                     <dl class="layui-nav-child">
                         <dd>
                             <a href="javascript:;" data-iframe-tab="pages/user-setting.html" data-title="基本资料"
@@ -115,6 +115,7 @@
                 });
             
             }
+            $("#username").html(username); 
             
             layuimini.init('api/init.json');
 
