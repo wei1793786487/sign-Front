@@ -346,9 +346,12 @@
 
             var username = readCookie("username");
 
+            if (username == null || username == "") {
+                window.location.href = "../login.html";
+            }
             $.ajax({
                 type: "GET",
-                url: "http://api.wukaka.com/user/"+username+"",
+                url: "http://api.wukaka.com/user/" + username + "",
                 dataType: "json",
                 crossDomain: true, //设置跨域为true
                 xhrFields: {
@@ -357,10 +360,10 @@
                 success: function (data) {
 
                     if (data.code === 200) {
-                     $("#lasttime").html(data.data.lasttime);
-                     $("#lastaddress").html(data.data.address);
-                     $("#meetingcount").html(data.data.meetingcount);
-                     $("#personcount").html(data.data.personcount);
+                        $("#lasttime").html(data.data.lasttime);
+                        $("#lastaddress").html(data.data.address);
+                        $("#meetingcount").html(data.data.meetingcount);
+                        $("#personcount").html(data.data.personcount);
                     } else {
                         layer.msg(data.errorMsg);
                     }

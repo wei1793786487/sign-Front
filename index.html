@@ -109,11 +109,30 @@
                 element = layui.element,
                 layer = layui.layer;
 
+
+
+            var remember = readCookie("remember");
+            if (remember != null && remember != "") {
+                $.ajax({
+                    type: "GET",
+                    url: "http://api.wukaka.com/isLife",
+                    crossDomain: true, //设置跨域为true
+                    xhrFields: {
+                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                    },
+                    success: function (data) {
+                        if (data.code === 200) {
+                            location.reload();
+                        }
+                    }
+                })
+            }
+
+
+
             var username = readCookie("username");
 
-
             $("#username").html(username);
-
             //  请求菜单
             $.ajax({
                 type: "GET",
@@ -176,8 +195,6 @@
             });
 
         });
-
-      
     </script>
 </body>
 
