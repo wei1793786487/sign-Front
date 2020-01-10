@@ -66,6 +66,7 @@ layui.define(["element", "jquery"], function (exports) {
 
         /**
          * 自定义接口解析
+         * data ： 菜单json对象
          */
         this.Customizeinit = function (data) {
             var loading = layer.load(0, {
@@ -164,7 +165,7 @@ layui.define(["element", "jquery"], function (exports) {
             window.menuParameId = 1;
 
             $.each(data, function (key, val) {
-                headerMenuHtml += '<li class="layui-nav-item ' + headerMenuCheckDefault + '" id="' + key + 'HeaderId" data-menu="' + key + '"> <a href="javascript:;"><i class="' + val.icon + '"></i> ' + val.title + '</a> </li>\n';
+                // headerMenuHtml += '<li class="layui-nav-item ' + headerMenuCheckDefault + '" id="' + key + 'HeaderId" data-menu="' + key + '"> <a href="javascript:;"><i class="' + val.icon + '"></i> ' + val.title + '</a> </li>\n';
                 headerMobileMenuHtml += '<dd><a href="javascript:;" id="' + key + 'HeaderId" data-menu="' + key + '"><i class="' + val.icon + '"></i> ' + val.title + '</a></dd>\n';
                 leftMenuHtml += '<ul class="layui-nav layui-nav-tree layui-left-nav-tree ' + leftMenuCheckDefault + '" id="' + key + '">\n';
                 var menuList = val.child;

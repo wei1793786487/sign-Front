@@ -124,17 +124,17 @@
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-username" for="username"></label>
-                        <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱"
+                        <input type="text" name="username" lay-verify="required|account" placeholder="用户名"
                             autocomplete="off" class="layui-input" value="admin">
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-password" for="password"></label>
                         <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                            autocomplete="off" class="layui-input" value="123456">
+                            autocomplete="off" class="layui-input" value="123">
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-vercode" for="captcha"></label>
-                        <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码"
+                        <input type="text" name="captcha" lay-verify="required|captcha" placeholder="验证码"
                             autocomplete="off" class="layui-input verification captcha">
                         <div class="captcha-img" id="captcha_button">
                             <img id="captchaPic" src="http://api.wukaka.com/verifyCode.jpg">
@@ -144,7 +144,7 @@
                         <input type="checkbox" name="remember-me" value="true" lay-skin="primary" title="记住密码">
                     </div>
                     <div class="layui-form-item">
-                        <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="login">登 入</button>
+                        <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="login">登录</button>
                     </div>
                 </form>
             </div>
@@ -207,7 +207,7 @@
                     },
                     success: function (data) {
                         if (data.success === true) {
-                            layer.msg('登录成功', function () {
+                            layer.msg('登录成功', {time: 1000,},function () {
                                 window.location = 'index.html';
                             });
                         } else {

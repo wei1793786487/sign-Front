@@ -59,7 +59,7 @@
                                 data-icon="fa fa-gears">修改密码</a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" class="login-out">退出登录</a>
+                            <a href="#" class="login-out" id="logout">退出登录</a>
                         </dd>
                     </dl>
                 </li>
@@ -112,18 +112,9 @@
             var username = readCookie("username");
 
 
-
-            if (username === null || username == "") {
-                layer.msg("请先登录", {
-                    time: 1000,
-                    icon: 2
-                }, function () {
-                    window.location = 'login.html';
-                });
-
-            }
             $("#username").html(username);
 
+            //  请求菜单
             $.ajax({
                 type: "GET",
                 url: "http://api.wukaka.com/menu",
@@ -132,28 +123,61 @@
                 xhrFields: {
                     withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
                 },
+
                 success: function (data) {
                     if (data.code === 200) {
                         var json = data.data.menu;
                         var _jsonmeau = json.substr(0, json.length);
                         var jsonmeau = $.parseJSON(_jsonmeau);
                         layuimini.Customizeinit(jsonmeau);
+                    } else if (data.code > 2000 && data.code < 2010) {
+                        // layer.msg(data.errorMsg, {
+                        //     time: 1000,
+                        //     icon: 2
+                        // }, function () {
+                        //     window.location = 'login.html';
+                        // });
                     } else {
-
+                        layer.msg(data.errorMsg, {
+                            time: 1000,
+                            icon: 2
+                        })
                     }
                 }
 
             })
 
-
-            // layuimini.init(jsonmeau);
-
             $('.login-out').on("click", function () {
-                layer.msg('退出登录成功', function () {
-                    window.location = 'login.html';
-                });
+                $.ajax({
+                    type: "GET",
+                    url: "http://api.wukaka.com/logout",
+                    dataType: "json",
+                    crossDomain: true, //设置跨域为true
+                    xhrFields: {
+                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                    },
+                    success: function (data) {
+                        if (data.code === 200) {
+                            layer.msg('退出登录成功', {
+                                time: 1000
+                            }, function () {
+                                window.location = 'login.html';
+                            });
+                        } else {
+                            layer.msg(data.message, {
+                                time: 1000,
+                                icon: 2
+                            })
+                        }
+                    }
+
+                })
+
             });
+
         });
+
+      
     </script>
 </body>
 
