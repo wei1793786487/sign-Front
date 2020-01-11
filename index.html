@@ -50,10 +50,7 @@
                         <div id="username"></div>
                     </a>
                     <dl class="layui-nav-child">
-                        <dd>
-                            <a href="javascript:;" data-iframe-tab="pages/user-setting.html" data-title="基本资料"
-                                data-icon="fa fa-gears">基本资料</a>
-                        </dd>
+                    
                         <dd>
                             <a href="javascript:;" data-iframe-tab="pages/user-password.html" data-title="修改密码"
                                 data-icon="fa fa-gears">修改密码</a>
@@ -117,7 +114,7 @@
                     xhrFields: {
                         withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
                     },
-                    success: function (data) {
+                    success: function (data) { 
                         if (data.code === 200) {
                             location.reload();
                         }

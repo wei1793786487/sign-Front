@@ -156,11 +156,9 @@
                 if (obj.event === 'edit') {
                     layer.alert('编辑行：<br>' + JSON.stringify(data))
                 } else if (obj.event === 'find') {
-
                     // 修改url
                     var url = data['photoName'];
                     $('#faceimg').attr("src", url);
-
                     layer.open({
                         type: 1,
                         title: false,
