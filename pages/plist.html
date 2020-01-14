@@ -16,7 +16,7 @@
         <div class="layuimini-main">
             <!-- 隐藏图片 -->
             <div id="tong" style="width: 295px; height: 413px; display: none;">
-                <img id="faceimg" src="" style="max-width: 100%;">
+                <img id="faceimg" src="" style="width: 295px; height: 413px;">
             </div>
             <fieldset class="layui-elem-field layuimini-search">
                 <legend>搜索信息</legend>
@@ -26,7 +26,7 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">姓名</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="username" autocomplete="off" class="layui-input">
+                                    <input type="text" name="personName" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -38,13 +38,11 @@
             </fieldset>
 
             <div class="layui-btn-group">
-                <button class="layui-btn data-add-btn">添加</button>
-                <button class="layui-btn layui-btn-danger data-delete-btn">删除</button>
+                <button class="layui-btn layui-btn-danger data-delete-btn">删除所选</button>
             </div>
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
             <script type="text/html" id="currentTableBar">
-                <a class="layui-btn layui-btn-xs data-count-edit" lay-event="find">查看</a>
-                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-xs data-count-edit" lay-event="find">查看人员</a>
             </script>
         </div>
     </div>
@@ -54,16 +52,17 @@
     </script>
 
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>‘
-    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
     <script>
         layui.use(['form', 'table'], function () {
             var $ = layui.jquery,
                 form = layui.form,
                 table = layui.table;
 
+
             table.render({
                 elem: '#currentTableId',
-                url: '../api/ptable.json',
+                url: 'http://api.wukaka.com/person',
                 cols: [
                     [{
                             type: "checkbox",
@@ -80,14 +79,15 @@
                         {
                             field: 'personName',
                             width: 200,
-                            title: '人员姓名',
+                            title: '人员姓名 （双击可修改）',
                             edit: true
                         },
                         {
                             field: 'addTime',
                             width: 200,
                             title: '添加时间',
-                            sort: true
+                            sort: true,
+
                         },
                         {
                             title: '操作',
@@ -106,10 +106,6 @@
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                var result = JSON.stringify(data.field);
-                layer.alert(result, {
-                    title: '最终的搜索信息'
-                });
 
                 //执行搜索重载
                 table.reload('currentTableId', {
@@ -117,24 +113,39 @@
                         curr: 1
                     },
                     where: {
-                        searchParams: result
+                        personName: data.field.personName
                     }
                 }, 'data');
 
                 return false;
             });
 
-            // 监听添加操作
-            $(".data-add-btn").on("click", function () {
-                location.href="upload.html";
-            });
 
-            table.on('edit(currentTableFilter)', function (obj) { 
+
+            table.on('edit(currentTableFilter)', function (obj) {
                 // console.log("修改后的的值="+obj.value); //得到修改后的值
                 // console.log("当前编辑的子弹"+obj.field); //当前编辑的字段名
-
                 //发送数据到后台
-                console.log(obj.data); //所在行的所有相关数据  
+                // console.log(obj.data.uuid); //所在行的所有相关数据  
+                // alert(obj.value);
+                // alert(obj.field);
+                $.ajax({
+                    type: "PUT",
+                    url: "http://api.wukaka.com/person",
+                    data: {
+                        "personName": obj.value,
+                        "id": obj.data.id
+                    },
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                    },
+                    success: function (data) {
+                        if (data.code != 200) {
+                            alert(data.message)
+                        }
+                    }
+                })
 
 
             })
@@ -143,7 +154,33 @@
             $(".data-delete-btn").on("click", function () {
                 var checkStatus = table.checkStatus('currentTableId'),
                     data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
+
+            
+                var arr = []; //存储id的数组
+                data.forEach(function (item) {
+                    arr.push(item.id);
+                })
+               
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "http://api.wukaka.com/person",
+                    data: {
+                        ids: arr
+                    },
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                    },
+                    success: function (data) {
+                        if (data.code != 200) {
+                            alert(data.message)
+                        }
+                    }
+                })
+
+
+
             });
 
             //监听表格复选框选择
@@ -157,7 +194,7 @@
                     layer.alert('编辑行：<br>' + JSON.stringify(data))
                 } else if (obj.event === 'find') {
                     // 修改url
-                    var url = data['photoName'];
+                    var url = "http://www.hqgml.com/" + data['url'];
                     $('#faceimg').attr("src", url);
                     layer.open({
                         type: 1,
