@@ -20,31 +20,40 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="name" lay-verify="meeting_name" autocomplete="off" placeholder="请输入会议名称" class="layui-input">
+                        <input type="text" name="meetingName" lay-verify="meeting_name" autocomplete="off" placeholder="请输入会议名称" class="layui-input">
                     </div>
                 </div>
                  <div class="layui-form-item">
                     <label class="layui-form-label">会议地点</label>
                     <div class="layui-input-block">
-                        <input type="text" name="advice" lay-verify="meeting_advice" autocomplete="off" placeholder="请输入会议地点" class="layui-input">
+                        <input type="text" name="mettingAddress" lay-verify="meeting_advice" autocomplete="off" placeholder="请输入会议地点" class="layui-input">
                     </div>
                 </div>
                  <div class="layui-form-item">
                     <label class="layui-form-label">联系方式</label>
                     <div class="layui-input-block">
-                        <input type="text" name="phone" lay-verify="meeting_phone" autocomplete="off" placeholder="请输入会议管理者的联系电话" class="layui-input">
+                        <input type="text" name="meetingPhone" lay-verify="meeting_phone" autocomplete="off" placeholder="请输入会议管理者的联系电话" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="stime" id="stime"  lay-verify="meeting_time" placeholder="请输入会议的时间" class="layui-input">
+                        <input type="text" name="startTime" id="stime"  lay-verify="meeting_time" placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="etime" id="etime"  lay-verify="meeting_time" placeholder="请输入会议的时间" class="layui-input">
+                        <input type="text" name="endTime" id="etime"  lay-verify="meeting_time" placeholder="请输入会议的时间" class="layui-input">
+                    </div>
+                </div>
+   
+
+                <div class="layui-form-item layui-form-text">
+
+                    <label class="layui-form-label">会议信息</label>
+                    <div class="layui-input-block">
+                        <textarea  placeholder="请输入会议的介绍(选填)" name="information" class="layui-textarea " id="m_information" style="margin-top: 45dp;margin-top: 25px;"></textarea>
                     </div>
                 </div>
             
@@ -60,9 +69,11 @@
     </div>
 
 <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
     layui.use(['form', 'layedit', 'laydate'], function () {
+
         var form = layui.form
             , layer = layui.layer
             , layedit = layui.layedit
@@ -105,11 +116,11 @@
       
         //监听提交
         form.on('submit(demo1)', function (data) {
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
+            // layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // })
 
-
+console.log(data.field);
             return false;
         });
  

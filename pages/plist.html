@@ -54,10 +54,12 @@
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>‘
     <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
     <script>
-        layui.use(['form', 'table'], function () {
+        //每次进入刷新
+        layui.use(['form', 'table', 'layer'], function () {
             var $ = layui.jquery,
                 form = layui.form,
-                table = layui.table;
+                table = layui.table,
+                layer = layui.layer;
 
 
             table.render({
@@ -142,7 +144,8 @@
                     },
                     success: function (data) {
                         if (data.code != 200) {
-                            alert(data.message)
+                            layer.msg(data.message);
+
                         }
                     }
                 })
@@ -155,12 +158,17 @@
                 var checkStatus = table.checkStatus('currentTableId'),
                     data = checkStatus.data;
 
-            
+                layer.msg('删除中', {
+                    icon: 16,
+                    shade: 0.01
+                });
+
+
                 var arr = []; //存储id的数组
                 data.forEach(function (item) {
                     arr.push(item.id);
                 })
-               
+
 
                 $.ajax({
                     type: "DELETE",
@@ -173,8 +181,14 @@
                         withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
                     },
                     success: function (data) {
-                        if (data.code != 200) {
-                            alert(data.message)
+                        if (data.code === 200) {
+
+                            layer.msg(data.data, {
+                                time: 1000,
+                            }, function () {
+                                window.location = 'plist.html';
+                            });
+
                         }
                     }
                 })
