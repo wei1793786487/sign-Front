@@ -23,36 +23,46 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="name" lay-verify="meeting_name" autocomplete="off"
+                        <input type="text" name="meetingName" lay-verify="meeting_name" autocomplete="off"
                             placeholder="请输入会议名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议地点</label>
                     <div class="layui-input-block">
-                        <input type="text" name="advice" lay-verify="meeting_advice" autocomplete="off"
+                        <input type="text" name="mettingAddress" lay-verify="meeting_advice" autocomplete="off"
                             placeholder="请输入会议地点" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">联系方式</label>
                     <div class="layui-input-block">
-                        <input type="text" name="phone" lay-verify="meeting_phone" autocomplete="off"
+                        <input type="text" name="meetingPhone" lay-verify="meeting_phone" autocomplete="off"
                             placeholder="请输入会议管理者的联系电话" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="stime" id="stime" lay-verify="meeting_time" placeholder="请输入会议的时间"
-                            class="layui-input">
+                        <input type="text" name="startTime" id="stime" lay-verify="meeting_time" autocomplete="off"
+                            placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="etime" id="etime" lay-verify="meeting_time" placeholder="请输入会议的时间"
-                            class="layui-input">
+                        <input type="text" name="endTime" id="etime" lay-verify="meeting_time" autocomplete="off"
+                            placeholder="请输入会议的时间" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+
+                    <label class="layui-form-label">会议信息</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入会议的介绍(选填)" name="information" autocomplete="off"
+                            class="layui-textarea " id="m_information"
+                            style="margin-top: 45dp;margin-top: 25px;"></textarea>
                     </div>
                 </div>
 
@@ -92,7 +102,6 @@
             </fieldset>
 
             <div class="layui-btn-group">
-                <button class="layui-btn data-add-btn">添加</button>
                 <button class="layui-btn layui-btn-danger data-delete-btn">删除</button>
             </div>
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
@@ -121,11 +130,11 @@
                 cols: [
                     [{
                             type: "checkbox",
-                            width: 100,
+                            width: 50,
                             fixed: "left"
                         },
                         {
-                            width: 200,
+                            width: 100,
                             title: 'ID',
                             sort: true,
                             templet: "#xuhao",
@@ -133,14 +142,32 @@
                         },
                         {
                             field: 'meetingName',
-                            width: 300,
+                            width: 200,
                             title: '会议名字',
                             align: "center"
                         },
                         {
                             field: 'mettingAddress',
-                            width: 300,
+                            width: 200,
                             title: '会议地点',
+                            align: "center"
+                        },
+                        {
+                            field: 'startTime',
+                            width: 250,
+                            title: '开始时间',
+                            align: "center"
+                        },
+                        {
+                            field: 'endTime',
+                            width: 250,
+                            title: '结束时间',
+                            align: "center"
+                        },
+                        {
+                            field: 'persionNumber',
+                            width: 120,
+                            title: '会议人数',
                             align: "center"
                         },
                         {
@@ -152,7 +179,6 @@
                         }
                     ]
                 ],
-                width: 1600,
                 limits: [10, 15, 20, 50, 100],
                 limit: 15,
                 page: true,
@@ -248,16 +274,16 @@
                     layer.open({
                         title: "修改会议信息",
                         type: 1,
-                        area: ['1000px', '700px'],
+                        area: ['700px', '600px'],
                         success: function (layero, index) {
                             //点击之后回显
                             form.val('modify', {
-                                "name": data["meetingName"],
-                                "advice": data["mettingAddress"],
-                                "phone": data["meetingPhone"],
-                                "stime": data["times"],
-                                "etime": data["times"]
-
+                                "meetingName": data["meetingName"],
+                                "mettingAddress": data["mettingAddress"],
+                                "meetingPhone": data["meetingPhone"],
+                                "startTime": data["startTime"],
+                                "endTime": data["endTime"],
+                                "information": data["information"]
                             })
                         },
                         content: $("#modify")
