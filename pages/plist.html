@@ -62,6 +62,13 @@
                 layer = layui.layer;
 
 
+            function checkPhone(data) {
+                if ((/^1[3456789]\d{9}$/.test(data))) {
+                    return true;
+                }
+            }
+
+
             table.render({
                 elem: '#currentTableId',
                 url: 'http://api.wukaka.com/person',
@@ -81,7 +88,13 @@
                         {
                             field: 'personName',
                             width: 200,
-                            title: '人员姓名 （双击可修改）',
+                            title: '人员姓名 （点击可修改）',
+                            edit: true
+                        },
+                        {
+                            field: 'phone',
+                            width: 200,
+                            title: '手机号码（点击可修改）',
                             edit: true
                         },
                         {
@@ -100,7 +113,7 @@
                         }
                     ]
                 ],
-                width: 800,
+                width: 1000,
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 15,
                 page: true
@@ -125,19 +138,29 @@
 
 
             table.on('edit(currentTableFilter)', function (obj) {
-                // console.log("修改后的的值="+obj.value); //得到修改后的值
-                // console.log("当前编辑的子弹"+obj.field); //当前编辑的字段名
-                //发送数据到后台
-                // console.log(obj.data.uuid); //所在行的所有相关数据  
-                // alert(obj.value);
-                // alert(obj.field);
+               
+                var old = $(this).prev().text(); //旧值
+
+                if (obj.field === "phone") {
+                    if (!checkPhone(obj.value)) {
+                        layer.msg("请输入正确的手机号", {
+                            time: 1000,
+                        })
+                        $(this).val(old); //重新掰回来                                
+                        return false;
+                    }
+                }else{
+                    if(obj.value===""||obj.value==null){
+                        layer.msg("输入为空", {
+                            time: 1000,
+                        })
+                        $(this).val(old); //重新掰回来 
+                    }
+                }
                 $.ajax({
                     type: "PUT",
                     url: "http://api.wukaka.com/person",
-                    data: {
-                        "personName": obj.value,
-                        "id": obj.data.id
-                    },
+                    data: obj.data,
                     crossDomain: true,
                     xhrFields: {
                         withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
@@ -145,11 +168,9 @@
                     success: function (data) {
                         if (data.code != 200) {
                             layer.msg(data.message);
-
                         }
                     }
                 })
-
 
             })
 
