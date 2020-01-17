@@ -12,13 +12,14 @@
 <body>
     <div class="layuimini-container">
 
-    <div id="information" style="display: none;">
-        
-    </div>
+        <div id="information" style="display: none;">
+
+        </div>
 
         <div class="layuimini-main">
             <blockquote class="layui-elem-quote">
-                请上传您要添加的人脸，注意照片的名称为人员的名称。
+                请上传您要添加的人脸，注意照片的名称为人员的名称。</br>
+           
             </blockquote>
             <div id="zyupload" class="zyupload"></div>
         </div>
@@ -36,7 +37,7 @@
                 itemWidth: "150px", // 文件项的宽度
                 itemHeight: "200px", // 文件项的高度
                 url: "http://api.wukaka.com/upload/persion", // 上传文件的路径
-                fileType: ["jpg", "png","JPEG"], // 上传文件的类型
+                fileType: ["jpg", "png", "jpeg","xlsx","xls"], // 上传文件的类型
                 multiple: true, // 是否可以多个文件上传
                 dragDrop: true, // 是否可以拖动上传文件
                 tailor: false, // 是否可以裁剪图片
@@ -45,20 +46,22 @@
                 onSelect: function (selectFiles,
                     allFiles) { // 选择文件的回调方法  selectFile:当前选中的文件  allFiles:还没上传的全部文件
                     console.info("当前选择了以下文件：");
-                    console.info(selectFiles); 
+                    console.info(selectFiles);
                 },
-                onSuccess: function (file,response) { // 文件上传成功的回调方法
-                var photoname=file.name;
-                var index=photoname.lastIndexOf(".");
-                var psersonname=photoname.substring(0, index);
+                onSuccess: function (file, response) { // 文件上传成功的回调方法
+                    var photoname = file.name;
+                    var index = photoname.lastIndexOf(".");
+                    var psersonname = photoname.substring(0, index);
 
-                 var information=  $.parseJSON(response)
-                    if(information.code===200){
-                        $("#information").append("人员 "+  psersonname+"    "+information.data+"</br>");
-                    }else{ 
-                        $("#information").append("人员 " +  psersonname+"上传失败,原因是   "+information.message+'</br>');
+                    var information = $.parseJSON(response)
+                    if (information.code === 200) {
+                        $("#information").append("人员 " + psersonname + "    " + information.data +
+                            "</br>");
+                    } else {
+                        $("#information").append("人员 " + psersonname + "上传失败,原因是   " + information
+                            .message + '</br>');
                     }
-                   
+
                 },
                 onFailure: function (file, response) { // 文件上传失败的回调方法
                 },
@@ -70,17 +73,17 @@
 
                 if (ZYFILE.funReturnNeedFiles().length > 0) {
                     layer.open({
-                    type: 1 ,
-                    title: '文件上传信息',
-                    area: ['500px', '500px'],
-                    shade: 0,
-                    maxmin: true,
-                    content: $('#information')
-                
-                });
+                        type: 1,
+                        title: '文件上传信息',
+                        area: ['500px', '500px'],
+                        shade: 0,
+                        maxmin: true,
+                        content: $('#information')
+
+                    });
                 }
-               
-               
+
+
             })
 
 
