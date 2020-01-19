@@ -43,7 +43,7 @@
                             id="demo3" style="margin-top: 20px;">
                         <button type="button" class="layui-btn layui-btn-normal" id="submitadd"
                             style="margin-top: 20px;">提交报名</button>
-                        <button type="button" class="layui-btn" style="margin-top: 20px;margin-left: 1px;">选择所有</button>
+                        <button type="button" class="layui-btn" id="submitAll" style="margin-top: 20px;margin-left: 1px;">选择所有</button>
 
                     </form>
 
@@ -120,7 +120,6 @@
 
                 }
             })
-
             tableSelect.render({
                 elem: '#demo3',
                 searchKey: 'personName',
@@ -240,7 +239,6 @@
                         data.data.forEach(function (value) {
                             $("#information").append(value + '</br>');
                         })
-
                         layer.open({
                             type: 1,
                             title: '人员添加信息',
@@ -250,7 +248,6 @@
                             content: $('#information')
                         });
                     }
-
                 },
                 error:function(){
                     layer.msg("请求异常，请稍后再试", {
@@ -261,6 +258,57 @@
                 }
             })
         })
+
+
+          //添加所有的按钮触发
+        $("#submitAll").click(function () {
+            if ($("#mid").val() == null || $("#mid").val() == "") {
+                layer.msg("请选择会议", {
+                    time: 1000,
+                });
+                return false;
+            }
+     
+            layer.load(); //上传loading
+         
+            $.ajax({
+                type: "POST",
+                url: "http://api.wukaka.com/meeting/addAll",
+                data: {"mid":mid},
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        layer.closeAll('loading'); //关闭loading
+                        data.data.forEach(function (value) {
+                            $("#information").append(value + '</br>');
+                        })
+                        layer.open({
+                            type: 1,
+                            title: '人员添加信息',
+                            area: ['500px', '500px'],
+                            shade: 0,
+                            maxmin: true,
+                            content: $('#information')
+                        });
+                    }
+                },
+                error:function(){
+                    layer.msg("请求异常，请稍后再试", {
+                                time: 1000,
+                            });
+                    layer.closeAll('loading'); //关闭loading
+
+                }
+            })
+        })
+
+
+
+
+
     </script>
 </body>
 

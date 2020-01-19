@@ -17,31 +17,27 @@
         <div class="layuimini-main">
 
 
-
-
-
             <fieldset class="layui-elem-field layuimini-search">
                 <legend>搜索信息</legend>
                 <div style="margin: 10px 10px 10px 10px">
 
-
-
-
-
-                    <form class="layui-form layui-form-pane" action="">
-
+                    <form class="layui-form layui-form-pane" action="">、
+                        <input type="text" name="mid" style="display: none;" id="mid">
                         <!-- 会议的选择 -->
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">请选择会议</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="meetingName" id="select-meeting" autocomplete="off"
+                                    <input type="text" name="" id="select-meeting" autocomplete="off"
                                         class="layui-input">
                                 </div>
+
                             </div>
                             <div class="layui-inline">
-                                <a class="layui-btn" lay-submit="" lay-filter="data-meeting">查询</a>
+                                <a class="layui-btn" id="choosemeeting" lay-submit=""
+                                    lay-filter="data-search-btn">确定</a>
                             </div>
+
                         </div>
 
                         <!-- 人员的选择 -->
@@ -63,12 +59,15 @@
             </fieldset>
 
             <div class="layui-btn-group">
-                <button class="layui-btn data-add-btn">添加</button>
                 <button class="layui-btn layui-btn-danger data-delete-btn">删除</button>
                 <button class="layui-btn layui-btn layui-btn-normal">设置选择人员为已签到</button>
                 <button class="layui-btn layui-btn layui-btn-warm">设置选择人员为未签到</button>
             </div>
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <div id="choose">
+                <h1 style="text-align: center">请先选择会议。</h1>
+
+            </div>
             <script type="text/html" id="currentTableBar">
                 <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
@@ -77,6 +76,7 @@
     </div>
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
     <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
     <script type="text/html" id="xuhao">
         {{d.LAY_TABLE_INDEX+1}}
     </script>
@@ -89,52 +89,69 @@
                 tableSelect = layui.tableSelect,
                 table = layui.table;
 
-            table.render({
-                elem: '#currentTableId',
-                url: 'http://api.wukaka.com/meeting',
-                loading: "true",
-                cols: [
-                    [{
-                            type: "checkbox",
-                            width: 100,
-                            fixed: "left"
-                        },
-                        {
-                            width: 200,
-                            title: 'ID',
-                            sort: true,
-                            templet: "#xuhao",
-                            align: "center"
-                        },
-                        {
-                            field: 'meetingName',
-                            width: 300,
-                            title: '会议名字',
-                            align: "center"
-                        },
-                        {
-                            field: 'mettingAddress',
-                            width: 300,
-                            title: '会议地点',
-                            align: "center"
-                        },
-                        {
-                            title: '操作',
-                            minWidth: 50,
-                            templet: '#currentTableBar',
-                            fixed: "right",
-                            align: "center"
-                        }
-                    ]
-                ],
-                width: 1600,
-                limits: [10, 15, 20, 50, 100],
-                limit: 15,
-                page: true,
-                text: {
-                    none: '无数据'
+            $("#choosemeeting").click(function () {
+                $("#choose").hide();
+
+                var mid = $("#mid").val();
+
+                if (mid === "") {
+                    layer.msg("请先选择一个会议", {
+                        time: 1000,
+                    })
+                    return false;
                 }
+                table.render({
+                    elem: '#currentTableId',
+                    url: 'http://api.wukaka.com/meeting/'+mid+'',
+                    loading: "true",
+                    cols: [
+                        [{
+                                type: "checkbox",
+                                width: 100,
+                                fixed: "left"
+                            },
+                            {
+                                width: 200,
+                                title: 'ID',
+                                sort: true,
+                                templet: "#xuhao",
+                                align: "center"
+                            },
+                            {
+                                field: 'meetingName',
+                                width: 300,
+                                title: '会议名字',
+                                align: "center"
+                            },
+                            {
+                                field: 'mettingAddress',
+                                width: 300,
+                                title: '会议地点',
+                                align: "center"
+                            },
+                            {
+                                title: '操作',
+                                minWidth: 50,
+                                templet: '#currentTableBar',
+                                fixed: "right",
+                                align: "center"
+                            }
+                        ]
+                    ],
+                    width: 1600,
+                    limits: [10, 15, 20, 50, 100],
+                    limit: 15,
+                    page: true,
+                    text: {
+                        none: '无数据'
+                    }
+                });
+
             });
+
+
+
+
 
             //日期时间选择器
             laydate.render({
@@ -149,58 +166,12 @@
 
 
 
-            //监听修改提交
-            form.on('submit(demo1)', function (data) {
-                layer.alert(JSON.stringify(data.field), {
-                    title: '最终的提交信息'
-                })
-                return false;
-            });
-
-            // 监听搜索操作
-            form.on('submit(data-search-btn)', function (data) {
-                var result = JSON.stringify(data.field);
-                layer.alert(result, {
-                    title: '最终的搜索信息'
-                });
-
-                //执行搜索重载
-                table.reload('currentTableId', {
-                    page: {
-                        curr: 1
-                    },
-                    where: {
-                        searchParams: result
-                    }
-                }, 'data');
-                return false;
-            });
 
 
 
-            // 监听会议查询
-            form.on('submit(data-meeting)', function (data) {
-                var result = JSON.stringify(data.field);
-                layer.alert(result, {
-                    title: '最终的搜索信息'
-                });
 
-                //执行搜索重载
-                table.reload('currentTableId', {
-                    page: {
-                        curr: 1
-                    },
-                    where: {
-                        searchParams: result
-                    }
-                }, 'data');
-                return false;
-            });
 
-            // 监听添加操作
-            $(".data-add-btn").on("click", function () {
-                location.href = "mlist-select.html";
-            });
+
 
             // 监听删除操作
             $(".data-delete-btn").on("click", function () {
@@ -260,39 +231,52 @@
             });
 
 
-            //监听会议选择
+
             tableSelect.render({
                 elem: '#select-meeting',
-                checkedKey: 'id',
+                checkedKey: 'ID',
+                searchKey: 'meetingName',
+                searchPlaceholder: '会议搜索',
+
                 table: {
-                    url: '../api/tableSelect.json',
+                    url: 'http://api.wukaka.com/meeting',
                     cols: [
                         [{
                                 type: 'radio'
                             },
                             {
-                                field: 'id',
-                                title: 'ID'
+                                width: 100,
+                                title: 'ID',
+                                sort: true,
+                                templet: "#xuhao",
+                                align: "center"
                             },
                             {
-                                field: 'username',
-                                title: '姓名'
+                                field: 'meetingName',
+                                width: 200,
+                                title: '会议名字',
+                                align: "center"
                             },
                             {
-                                field: 'sex',
-                                title: '性别'
-                            }
+                                field: 'mettingAddress',
+                                width: 200,
+                                title: '会议地点',
+                                align: "center"
+                            },
                         ]
                     ]
                 },
                 done: function (elem, data) {
                     var NEWJSON = []
+                    var id = []
                     layui.each(data.data, function (index, item) {
-                        NEWJSON.push(item.username)
+                        NEWJSON.push(item.meetingName);
+                        id.push(item.id);
                     })
                     elem.val(NEWJSON.join(","))
-                    //将选择的id放入mid里面
-                    $("#mid").val = data["id"];
+                    $("#mid").val(id)
+
+
                 }
             })
 
