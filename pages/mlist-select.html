@@ -12,14 +12,20 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
 
+            <div id="information" style="display: none;">
 
+            </div>
             <blockquote class="layui-elem-quote">
-                
+
                 请按照模板文件填写,系统将自动识别，并将报名人员与人员库人员自动关联。
-                <a href="../xls/mode.xlsx" class="layui-btn layui-btn-primary">点我下载模板文件</a><br>
-            </br>
-            其中模板文件中的联系方式为选填，如果用户本身没有存在电话信息，那么系统会自动读取会议添加模板<br>
-            并自动添加人员的联系方式储存到系统中。
+                <a href="../xls/mode.xlsx" class="layui-btn layui-btn-primary">点我下载模板文件</a>
+                <br>
+                上传的文件名为会议的名称。(允许上传类型xlsx或者xls)
+                <button type="button" class="layui-btn layui-btn-primary" id="test4"><i
+                        class="layui-icon"></i>点我上传会议人员</button>
+                </br>
+
+
 
             </blockquote>
 
@@ -27,15 +33,23 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">请选择</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="mid" style="display: none;" id="mid">
-                    <input type="text" name="" placeholder="会议" autocomplete="off" class="layui-input" id="demo2">
-                    <input type="text" name="pid" style="display: none;" id="pid">
-                    <input type="text" name="" placeholder="人员姓名" autocomplete="off" class="layui-input" id="demo3" style="margin-top: 20px;">
-                    <button type="button" class="layui-btn layui-btn-normal" style="margin-top: 20px;">确认选择</button>
+
+                    <form id="miss">
+                        <input type="text" name="mid" style="display: none;" id="mid">
+                        <input type="text" name="" placeholder="要添加的会议" autocomplete="off" class="layui-input"
+                            id="demo2">
+                        <input type="text" name="pids" style="display: none;" id="pid">
+                        <input type="text" name="" placeholder="要添加的人员" autocomplete="off" class="layui-input"
+                            id="demo3" style="margin-top: 20px;">
+                        <button type="button" class="layui-btn layui-btn-normal" id="submitadd"
+                            style="margin-top: 20px;">提交报名</button>
+                        <button type="button" class="layui-btn" style="margin-top: 20px;margin-left: 1px;">选择所有</button>
+
+                    </form>
+
+
                 </div>
 
-                <!-- <button type="button" class="layui-btn layui-btn-primary" id="test4"><i
-                        class="layui-icon"></i>点我上传人员列表</button> -->
 
             </div>
 
@@ -55,7 +69,8 @@
                 table = layui.table,
                 form = layui.form,
                 tableSelect = layui.tableSelect,
-                upload = layui.upload;
+                upload = layui.upload,
+                $ = layui.$;
 
 
             tableSelect.render({
@@ -63,7 +78,7 @@
                 checkedKey: 'ID',
                 searchKey: 'meetingName',
                 searchPlaceholder: '会议搜索',
-                
+
                 table: {
                     url: 'http://api.wukaka.com/meeting',
                     cols: [
@@ -94,12 +109,15 @@
                 },
                 done: function (elem, data) {
                     var NEWJSON = []
+                    var id = []
                     layui.each(data.data, function (index, item) {
-                        NEWJSON.push(item.meetingName)
+                        NEWJSON.push(item.meetingName);
+                        id.push(item.id);
                     })
                     elem.val(NEWJSON.join(","))
-                    //将选择的id放入mid里面
-                    $("#mid").val = data["id"];
+                    $("#mid").val(id)
+
+
                 }
             })
 
@@ -108,8 +126,8 @@
                 searchKey: 'personName',
                 checkedKey: 'id',
                 searchPlaceholder: '人员名称',
-                height:'400',  //自定义高度
-                width:'500',  //自定义宽度
+                height: '400', //自定义高度
+                width: '500', //自定义宽度
                 table: {
                     url: 'http://api.wukaka.com/person',
                     cols: [
@@ -124,59 +142,125 @@
                                 align: "center"
                             },
                             {
-                            field: 'personName',
-                            title: '人员姓名',
-                        }
-                           
+                                field: 'personName',
+                                title: '人员姓名',
+                            }
+
                         ]
                     ]
                 },
                 done: function (elem, data) {
                     var psesons = []
+                    var ids = []
                     layui.each(data.data, function (index, item) {
                         psesons.push(item.personName)
+                        ids.push(item.id);
                     })
-                    
-                    $("#pid").val = psesons;
+                    elem.val(psesons.join(","))
+                    $("#pid").val(ids);
+
                 }
             })
 
 
 
+            //设置文件上传ajax发送cookie
 
-
-
-
-
-
-
-
+            $.ajaxSetup({
+                xhrFields: {
+                    withCredentials: true
+                },
+            });
+            //文件上传
             upload.render({ //允许上传的文件后缀
                 elem: '#test4',
-                url: '/upload/',
+                url: 'http://api.wukaka.com/upload/personMeeting',
                 accept: 'file',
                 exts: 'xlsx|xls',
                 done: function (res) {
-                    console.log(res)
-                },
-                before: function (obj) {
-                    //判断是不选择了要上传的会议
-                    var ischosemeet = $("#mid").val;
-                    if (val === "") {
-                        layer.alert('请先选择会议', {
-                            icon: 2
+                    layer.closeAll('loading'); //关闭loading
+                    if (res.code == 200) {
+                        res.data.forEach(function (value) {
+                            $("#information").append(value + '</br>');
                         });
-                    } else {
-                        layer.load(); //上传loading
+                        layer.open({
+                            type: 1,
+                            title: '人员添加信息',
+                            area: ['500px', '500px'],
+                            shade: 0,
+                            maxmin: true,
+                            content: $('#information')
+                        });
+
                     }
                 },
-                data: {
-                    mid: $("#mid").val
+                before: function (obj) {
+                    layer.load(); //上传loading
+                },
+                
+                error: function (index, upload) {
+                    layer.msg("传输异常", {
+                            time: 1000,
+                        })
+                    layer.closeAll('loading'); //关闭loading
                 }
 
             });
 
         });
+
+
+        $("#submitadd").click(function () {
+            if ($("#mid").val() == null || $("#mid").val() == "") {
+                layer.msg("请选择会议", {
+                    time: 1000,
+                });
+                return false;
+            }
+            if ($("#pid").val() == null || $("#pid").val() == "") {
+                layer.msg("请至少选择一个人员", {
+                    time: 1000,
+                });
+                return false;
+            }
+
+            layer.load(); //上传loading
+
+            $.ajax({
+                type: "POST",
+                url: "http://api.wukaka.com/meeting/person",
+                data: $("#miss").serialize(),
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                },
+                success: function (data) {
+                    if (data.code === 200) {
+                        layer.closeAll('loading'); //关闭loading
+                        data.data.forEach(function (value) {
+                            $("#information").append(value + '</br>');
+                        })
+
+                        layer.open({
+                            type: 1,
+                            title: '人员添加信息',
+                            area: ['500px', '500px'],
+                            shade: 0,
+                            maxmin: true,
+                            content: $('#information')
+                        });
+                    }
+
+                },
+                error:function(){
+                    layer.msg("请求异常，请稍后再试", {
+                                time: 1000,
+                            });
+                    layer.closeAll('loading'); //关闭loading
+
+                }
+            })
+        })
     </script>
 </body>
 
