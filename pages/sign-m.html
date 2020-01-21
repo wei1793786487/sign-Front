@@ -55,11 +55,9 @@
 
 
 
-                    <div id="echarts-records" style="min-height:200px;min-height:200px ;"></div>
-
-
                 </div>
             </fieldset>
+
 
             <div class="layui-btn-group">
 
@@ -70,6 +68,8 @@
                 <button class="layui-btn layui-btn layui-btn-warm" id="setIsCheck">设置选择人员为已签到</button>
                 <button class="layui-btn layui-btn layui-btn-danger" id="setNotCheck">设置选择人员为未签到</button>
             </div>
+
+            <div id="echarts-records" style="min-height:200px;min-height:200px ; display: none;  "></div>
 
 
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
@@ -115,6 +115,7 @@
                 }
 
 
+ 
                 // 获取图表数据
                 $.ajax({
                     type: "GET",
@@ -145,7 +146,7 @@
 
                 //    报表
                 var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
-              
+
                 option = {
                     title: {
                         text: '签到情况',
@@ -185,10 +186,12 @@
                     }]
                 };
                 echartsRecords.setOption(option);
-                  // echarts 窗口缩放自适应
-                  window.onresize = function () {
+                // echarts 窗口缩放自适应
+                window.onresize = function () {
                     echartsRecords.resize();
                 }
+
+                $("#echarts-records").show();
                 //图标渲染结束
                 //表格渲染开始
                 table.render({
@@ -250,6 +253,9 @@
             });
 
 
+
+
+        
 
 
 
