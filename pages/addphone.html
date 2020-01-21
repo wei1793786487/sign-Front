@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>会议签到系统</title>
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+            <div id="information" style="display: none;">
+
+            </div>
+            <blockquote class="layui-elem-quote">
+
+                请按照模板文件填写,系统将自动识别，自动保存联系方式
+                <a href="../xls/联系方式.xlsx" class="layui-btn layui-btn-primary">点我下载模板文件</a>
+               
+             
+                <button type="button" class="layui-btn layui-btn-primary" id="test4"><i
+                        class="layui-icon"></i>点我上传人员信息</button>
+                </br>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/html" id="xuhao">
+        {{d.LAY_TABLE_INDEX+1}}
+    </script>
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script>
+        layui.use(['table', 'upload'], function () {
+            var $ = layui.jquery,
+                upload = layui.upload,
+                $ = layui.$;
+
+
+            //设置文件上传ajax发送cookie
+
+            $.ajaxSetup({
+                xhrFields: {
+                    withCredentials: true
+                },
+            });
+            //文件上传
+            upload.render({ //允许上传的文件后缀
+                elem: '#test4',
+                url: 'http://api.wukaka.com/upload/Phone',
+                accept: 'file',
+                exts: 'xlsx|xls',
+                done: function (res) {
+                    layer.closeAll('loading'); //关闭loading
+                    if (res.code == 200) {
+                        res.data.forEach(function (value) {
+                            $("#information").append(value + '</br>');
+                        });
+                        layer.open({
+                            type: 1,
+                            title: '人员添加信息',
+                            area: ['500px', '500px'],
+                            shade: 0,
+                            maxmin: true,
+                            content: $('#information')
+                        });
+
+                    }
+                },
+                before: function (obj) {
+                    layer.load(); //上传loading
+                },
+                
+                error: function (index, upload) {
+                    layer.msg("传输异常", {
+                            time: 1000,
+                        })
+                    layer.closeAll('loading'); //关闭loading
+                }
+
+            });
+
+        });
+
+
+      
+
+
+
+
+    </script>
+</body>
+
+</html>
