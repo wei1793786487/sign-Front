@@ -180,10 +180,7 @@
                 var checkStatus = table.checkStatus('currentTableId'),
                     data = checkStatus.data;
 
-                layer.msg('删除中', {
-                    icon: 16,
-                    shade: 0.01
-                });
+              
 
 
                 var arr = []; //存储id的数组
@@ -191,6 +188,21 @@
                     arr.push(item.id);
                 })
 
+
+
+
+                if(arr.length==0){
+                layer.msg("请先选择", {
+                        time: 1000,
+                    })
+                    return false;
+               }
+               layer.msg('删除中', {
+                    icon: 16,
+                    shade: 0.01
+                });
+
+               
 
                 $.ajax({
                     type: "DELETE",
