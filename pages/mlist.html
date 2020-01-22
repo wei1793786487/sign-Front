@@ -176,7 +176,7 @@
                         }
                     ]
                 ],
-                hight:500,
+                hight: 500,
                 limits: [10, 15, 20, 50, 100],
                 limit: 15,
                 page: true,
@@ -224,7 +224,7 @@
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                
+
                 //执行搜索重载
                 table.reload('currentTableId', {
                     page: {
@@ -241,57 +241,68 @@
 
             // 监听删除操作
             $(".data-delete-btn").on("click", function () {
-                var checkStatus = table.checkStatus('currentTableId'),
-                    data = checkStatus.data;
-
-                layer.msg('删除中', {
-                    icon: 16,
-                    shade: 0.01
-                });
 
 
-                var arr = []; //存储id的数组
-                data.forEach(function (item) {
-                    arr.push(item.id);
-                })
-                
-                if(arr.length==0){
-                layer.msg("请先选择", {
-                        time: 1000,
+                layer.confirm('真的删除行么', function (index) {
+
+
+                    var checkStatus = table.checkStatus('currentTableId'),
+                        data = checkStatus.data;
+
+                    layer.msg('删除中', {
+                        icon: 16,
+                        shade: 0.01
+                    });
+
+
+                    var arr = []; //存储id的数组
+                    data.forEach(function (item) {
+                        arr.push(item.id);
                     })
-                    return false;
-               }
 
-                $.ajax({
-                    type: "DELETE",
-                    url: "http://api.wukaka.com/meeting",
-                    data: {
-                        ids: arr
-                    },
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) {
-                        if (data.code === 200) {
-
-                            layer.msg(data.data, {
-                                time: 1000,
-                            }, function () {
-                                location.reload();
-                            });
-
-                        } else {
-                            layer.msg(data.message, {
-                                time: 1000,
-                                icon: 2
-                            })
-                        }
+                    if (arr.length == 0) {
+                        layer.msg("请先选择", {
+                            time: 1000,
+                        })
+                        return false;
                     }
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: "http://api.wukaka.com/meeting",
+                        data: {
+                            ids: arr
+                        },
+                        crossDomain: true,
+                        xhrFields: {
+                            withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                        },
+                        success: function (data) {
+                            if (data.code === 200) {
+
+                                layer.msg(data.data, {
+                                    time: 1000,
+                                }, function () {
+                                    location.reload();
+                                });
+
+                            } else {
+                                layer.msg(data.message, {
+                                    time: 1000,
+                                    icon: 2
+                                })
+                            }
+                        }
+                    })
                 })
+
+
+
+
+
             });
 
-          
+
 
             table.on('tool(currentTableFilter)', function (obj) {
                 var data = obj.data;
@@ -305,7 +316,7 @@
                         success: function (layero, index) {
                             //点击之后回显
                             form.val('modify', {
-                                "id":data["id"],
+                                "id": data["id"],
                                 "meetingName": data["meetingName"],
                                 "mettingAddress": data["mettingAddress"],
                                 "meetingPhone": data["meetingPhone"],
@@ -331,7 +342,7 @@
                                         layer.msg(data.data, {
                                             time: 1000,
                                         }, function () {
-                                           location.reload();
+                                            location.reload();
                                         });
 
                                     } else {
@@ -351,7 +362,7 @@
                     //     obj.del();
                     //     layer.close(index);
                     // });
-                    layer.alert('删除行：<br>' + data["id"]);
+                    // layer.alert('删除行：<br>' + data["id"]);
                 }
             });
 

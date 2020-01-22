@@ -14,7 +14,7 @@
 <body>
     <div class="layuimini-container">
         <div class="layuimini-main">
-            
+
             <!-- 隐藏图片 -->
             <div id="tong" style="width: 295px; height: 413px; display: none;">
                 <img id="faceimg" src="" style="width: 295px; height: 413px;">
@@ -144,7 +144,7 @@
 
 
             table.on('edit(currentTableFilter)', function (obj) {
-               
+
                 var old = $(this).prev().text(); //旧值
 
                 if (obj.field === "phone") {
@@ -155,8 +155,8 @@
                         $(this).val(old); //重新掰回来                                
                         return false;
                     }
-                }else{
-                    if(obj.value===""||obj.value==null){
+                } else {
+                    if (obj.value === "" || obj.value == null) {
                         layer.msg("输入为空", {
                             time: 1000,
                         })
@@ -182,60 +182,70 @@
 
             // 监听删除操作
             $(".data-delete-btn").on("click", function () {
-                var checkStatus = table.checkStatus('currentTableId'),
-                    data = checkStatus.data;
-
-              
 
 
-                var arr = []; //存储id的数组
-                data.forEach(function (item) {
-                    arr.push(item.id);
-                })
+                layer.confirm('真的删除行么', function (index) {
+
+
+                    var checkStatus = table.checkStatus('currentTableId'),
+                        data = checkStatus.data;
 
 
 
 
-                if(arr.length==0){
-                layer.msg("请先选择", {
-                        time: 1000,
+                    var arr = []; //存储id的数组
+                    data.forEach(function (item) {
+                        arr.push(item.id);
                     })
-                    return false;
-               }
-               layer.msg('删除中', {
-                    icon: 16,
-                    shade: 0.01
-                });
 
-               
 
-                $.ajax({
-                    type: "DELETE",
-                    url: "http://api.wukaka.com/person",
-                    data: {
-                        ids: arr
-                    },
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) {
-                        if (data.code === 200) {
 
-                            layer.msg(data.data, {
-                                time: 1000,
-                            }, function () {
-                                window.location = 'plist.html';
-                            });
 
-                        } else {
-                            layer.msg(data.message, {
-                                time: 1000,
-                                icon: 2
-                            })
-                        }
+                    if (arr.length == 0) {
+                        layer.msg("请先选择", {
+                            time: 1000,
+                        })
+                        return false;
                     }
+                    layer.msg('删除中', {
+                        icon: 16,
+                        shade: 0.01
+                    });
+
+
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: "http://api.wukaka.com/person",
+                        data: {
+                            ids: arr
+                        },
+                        crossDomain: true,
+                        xhrFields: {
+                            withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                        },
+                        success: function (data) {
+                            if (data.code === 200) {
+
+                                layer.msg(data.data, {
+                                    time: 1000,
+                                }, function () {
+                                    window.location = 'plist.html';
+                                });
+
+                            } else {
+                                layer.msg(data.message, {
+                                    time: 1000,
+                                    icon: 2
+                                })
+                            }
+                        }
+                    })
                 })
+
+
+
+
 
 
 

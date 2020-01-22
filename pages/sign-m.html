@@ -437,11 +437,8 @@
                     // layer.alert('编辑行：<br>' + data["id"])
 
                 } else if (obj.event === 'delete') {
-                    // layer.confirm('真的删除行么', function (index) {
-                    //     obj.del();
-                    //     layer.close(index);
-                    // });
-                    var mid = $("#mid").val();
+                    layer.confirm('真的删除行么', function (index) {
+                        var mid = $("#mid").val();
                     $.ajax({
                         type: "DELETE",
                         url: "http://api.wukaka.com/check",
@@ -470,6 +467,8 @@
                             }
                         }
                     })
+                    });
+                 
 
 
                 }
