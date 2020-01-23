@@ -124,7 +124,7 @@
                         {
                             title: 'ID',
                             sort: true,
-                            width: 50,
+                            width: 70,
                             templet: "#xuhao",
                             align: "center"
                         },
@@ -141,7 +141,7 @@
                         },
                         {
                             field: 'requestparam',
-                            title: '行为',
+                            title: '参数',
                             width: 200,
                             align: "center",
                             templet: function (data) {
@@ -161,19 +161,22 @@
                         },
                         {
                             field: 'time',
-                            width: 100,
+                            width: 120,
+                            sort: true,
                             title: '时间(毫秒)',
                             align: "center"
                         },
                         {
                             field: 'createTime',
                             title: '执行时间',
+                            sort: true,
                             align: "center",
                             templet: function (data) {
+                                
                                 if (data.createTime == null) {
                                     return "";
                                 }
-                                return util.toDateString(data.createTime.time,
+                                return util.toDateString(data.createTime,
                                     "yyyy-MM-dd HH:mm:ss");
                             }
 
@@ -208,8 +211,6 @@
                 return false;
             });
 
-
-
             // 监听删除操作
             $(".data-delete-btn").on("click", function () {
                 layer.confirm('真的删除行么', function (index) {
@@ -218,16 +219,10 @@
                     var checkStatus = table.checkStatus('currentTableId'),
                         data = checkStatus.data;
 
-
-
-
                     var arr = []; //存储id的数组
                     data.forEach(function (item) {
                         arr.push(item.id);
                     })
-
-
-
 
                     if (arr.length == 0) {
                         layer.msg("请先选择", {
@@ -239,8 +234,6 @@
                         icon: 16,
                         shade: 0.01
                     });
-
-
 
                     $.ajax({
                         type: "DELETE",
