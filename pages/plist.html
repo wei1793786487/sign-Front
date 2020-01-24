@@ -101,7 +101,10 @@
                             field: 'phone',
                             width: 200,
                             title: '手机号码（点击可修改）',
-                            edit: true
+                            edit: true,
+                             templet: function (data) {
+                                    return data.phone === "" ? "无" : data.phone;
+                                }
                         },
                         {
                             field: 'addTime',

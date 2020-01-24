@@ -9,6 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
+
+    <style type="text/css">
+        .layui-laydate-content>.layui-laydate-list {
+                padding-bottom: 0px;
+                overflow: hidden;
+            }
+            .layui-laydate-content>.layui-laydate-list>li{
+                width:50%
+            }
+    
+            .merge-box .scrollbox .merge-list {
+                padding-bottom: 5px;
+            }
+    
+    </style>
 </head>
 
 <body>
@@ -45,14 +60,14 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="startTime" id="stime" lay-verify="meeting_time" autocomplete="off"
+                        <input type="text" name="startTime"   readonly=true id="stime" lay-verify="meeting_time" autocomplete="off"
                             placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="endTime" id="etime" lay-verify="meeting_time" autocomplete="off"
+                        <input type="text" name="endTime"  readonly=true id="etime" lay-verify="meeting_time" autocomplete="off"
                             placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
@@ -104,7 +119,7 @@
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
             <script type="text/html" id="currentTableBar">
                 <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑会议</a>
-                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">发送会议通知</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="message">发送会议通知</a>
             </script>
         </div>
     </div>
@@ -188,12 +203,16 @@
             //日期时间选择器
             laydate.render({
                 elem: '#stime',
-                type: 'datetime'
+                type: 'datetime',
+                format: 'yyyy-MM-dd HH:mm'
+
             });
 
             laydate.render({
                 elem: '#etime',
-                type: 'datetime'
+                type: 'datetime',
+                format: 'yyyy-MM-dd HH:mm'
+
             });
 
             // 自定义验证规则
@@ -357,12 +376,42 @@
                         },
                         content: $("#modify")
                     });
-                } else if (obj.event === 'delete') {
-                    // layer.confirm('真的删除行么', function (index) {
-                    //     obj.del();
-                    //     layer.close(index);
-                    // });
-                    // layer.alert('删除行：<br>' + data["id"]);
+                } else if (obj.event === 'message') {
+                    layer.confirm('真的要发送吗，短信包很贵的', function (index) {
+                        layer.msg('发送中，这个可能要花费很长时间', {
+                        icon: 16,
+                        shade: 0.01
+                    });
+  
+                    $.ajax({
+                                type: "GET",
+                                url: "http://api.wukaka.com/sendMassage",
+                                data: {mid:obj.data.id},
+                                crossDomain: true,
+                                xhrFields: {
+                                    withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                                },
+                                success: function (data) {
+                                    if (data.code === 200) {
+
+                                        layer.msg(data.data, {
+                                            time: 1000,
+                                        }, function () {
+                                        });
+
+                                    } else {
+                                        layer.msg(data.message, {
+                                            time: 1000,
+                                            icon: 2
+                                        })
+                                    }
+                                }
+                            })
+
+
+
+
+                    });
                 }
             });
 

@@ -9,6 +9,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
+    <style type="text/css">
+        .layui-laydate-content>.layui-laydate-list {
+                padding-bottom: 0px;
+                overflow: hidden;
+            }
+            .layui-laydate-content>.layui-laydate-list>li{
+                width:50%
+            }
+    
+            .merge-box .scrollbox .merge-list {
+                padding-bottom: 5px;
+            }
+    
+    </style>
 </head>
 
 <body>
@@ -43,14 +57,14 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="startTime" id="stime" lay-verify="meeting_time" placeholder="请输入会议的时间"
+                        <input type="text" name="startTime" id="stime" readonly=true lay-verify="meeting_time" placeholder="请输入会议的时间"
                             class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="endTime" id="etime" lay-verify="meeting_time" placeholder="请输入会议的时间"
+                        <input type="text" name="endTime" id="etime" readonly=true lay-verify="meeting_time" placeholder="请输入会议的时间"
                             class="layui-input">
                     </div>
                 </div>
@@ -80,6 +94,11 @@
     <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
     <script>
+         function checkPhone(data) {
+                if ((/^1[3456789]\d{9}$/.test(data))) {
+                    return true;
+                }
+            }
         layui.use(['form', 'layedit', 'laydate'], function () {
 
             var form = layui.form,
@@ -103,6 +122,10 @@
                     if (val.length == "") {
                         return "联系人方式不能为空";
                     }
+                    if(!checkPhone(val)){
+                        return "手机号格式不正确";
+                    }
+                    
                 },
                 meeting_time: function (val) {
                     if (val.length == "") {
@@ -114,16 +137,22 @@
             //日期时间选择器
             laydate.render({
                 elem: '#stime',
-                type: 'datetime'
+                type: 'datetime',
+                format: 'yyyy-MM-dd HH:mm'
             });
 
             laydate.render({
                 elem: '#etime',
-                type: 'datetime'
+                type: 'datetime',
+                format: 'yyyy-MM-dd HH:mm'
             });
 
             //监听提交
             form.on('submit(demo1)', function (data) {
+                layer.msg('添加中', {
+                        icon: 16,
+                        shade: 0.01
+                    });
                 var data = data.field
                 $.ajax({
                     type: "POST",
