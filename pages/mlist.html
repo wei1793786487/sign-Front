@@ -12,17 +12,17 @@
 
     <style type="text/css">
         .layui-laydate-content>.layui-laydate-list {
-                padding-bottom: 0px;
-                overflow: hidden;
-            }
-            .layui-laydate-content>.layui-laydate-list>li{
-                width:50%
-            }
-    
-            .merge-box .scrollbox .merge-list {
-                padding-bottom: 5px;
-            }
-    
+            padding-bottom: 0px;
+            overflow: hidden;
+        }
+
+        .layui-laydate-content>.layui-laydate-list>li {
+            width: 50%
+        }
+
+        .merge-box .scrollbox .merge-list {
+            padding-bottom: 5px;
+        }
     </style>
 </head>
 
@@ -60,15 +60,15 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="startTime"   readonly=true id="stime" lay-verify="meeting_time" autocomplete="off"
-                            placeholder="请输入会议的时间" class="layui-input">
+                        <input type="text" name="startTime" readonly=true id="stime" lay-verify="meeting_time"
+                            autocomplete="off" placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="endTime"  readonly=true id="etime" lay-verify="meeting_time" autocomplete="off"
-                            placeholder="请输入会议的时间" class="layui-input">
+                        <input type="text" name="endTime" readonly=true id="etime" lay-verify="meeting_time"
+                            autocomplete="off" placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
 
@@ -347,6 +347,11 @@
                         },
 
                         yes: function () {
+
+                            layer.msg('修改中', {
+                                icon: 16,
+                                shade: 0.01
+                            });
                             $.ajax({
                                 type: "PUT",
                                 url: "http://api.wukaka.com/meeting",
@@ -379,34 +384,35 @@
                 } else if (obj.event === 'message') {
                     layer.confirm('真的要发送吗，短信包很贵的', function (index) {
                         layer.msg('发送中，这个可能要花费很长时间', {
-                        icon: 16,
-                        shade: 0.01
-                    });
-  
-                    $.ajax({
-                                type: "GET",
-                                url: "http://api.wukaka.com/sendMassage",
-                                data: {mid:obj.data.id},
-                                crossDomain: true,
-                                xhrFields: {
-                                    withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                                },
-                                success: function (data) {
-                                    if (data.code === 200) {
+                            icon: 16,
+                            shade: 0.01
+                        });
 
-                                        layer.msg(data.data, {
-                                            time: 1000,
-                                        }, function () {
-                                        });
+                        $.ajax({
+                            type: "GET",
+                            url: "http://api.wukaka.com/sendMassage",
+                            data: {
+                                mid: obj.data.id
+                            },
+                            crossDomain: true,
+                            xhrFields: {
+                                withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
+                            },
+                            success: function (data) {
+                                if (data.code === 200) {
 
-                                    } else {
-                                        layer.msg(data.message, {
-                                            time: 1000,
-                                            icon: 2
-                                        })
-                                    }
+                                    layer.msg(data.data, {
+                                        time: 1000,
+                                    }, function () {});
+
+                                } else {
+                                    layer.msg(data.message, {
+                                        time: 1000,
+                                        icon: 2
+                                    })
                                 }
-                            })
+                            }
+                        })
 
 
 
