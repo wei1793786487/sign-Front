@@ -3,193 +3,306 @@
 
 <head>
     <meta charset="utf-8">
-    <title>会议签到系统</title>
+    <title>首页二</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <link rel="icon" href="images/favicon.ico">
-    <link rel="stylesheet" href="lib/layui-v2.5.4/css/layui.css" media="all">
-    <link rel="stylesheet" href="css/layuimini.css" media="all">
-    <link rel="stylesheet" href="lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-card {
+            border: 1px solid #f2f2f2;
+            border-radius: 5px;
+        }
 
-    <style id="layuimini-bg-color">
+        .icon {
+            margin-right: 10px;
+            color: #1aa094;
+        }
+
+        .icon-cray {
+            color: #ffb800 !important;
+        }
+
+        .icon-blue {
+            color: #1e9fff !important;
+        }
+
+        .icon-tip {
+            color: #ff5722 !important;
+        }
+
+        .layuimini-qiuck-module {
+            text-align: center;
+            margin-top: 10px
+        }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .welcome-module {
+            width: 100%;
+            height: 210px;
+        }
+
+        .panel {
+            background-color: #fff;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, .05)
+        }
+
+        .panel-body {
+            padding: 10px
+        }
+
+        .panel-title {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 12px;
+            color: inherit
+        }
+
+        .label {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25em;
+            margin-top: .3em;
+        }
+
+        .layui-red {
+            color: red
+        }
+
+        .main_btn>p {
+            height: 40px;
+        }
+
+        .layui-bg-number {
+            background-color: #F8F8F8;
+        }
+
+        .layuimini-notice:hover {
+            background: #f6f6f6;
+        }
+
+        .layuimini-notice {
+            padding: 7px 16px;
+            clear: both;
+            font-size: 12px !important;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .layuimini-notice-title,
+        .layuimini-notice-label {
+            padding-right: 70px !important;
+            text-overflow: ellipsis !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+        }
+
+        .layuimini-notice-title {
+            line-height: 28px;
+            font-size: 14px;
+        }
+
+        .layuimini-notice-extra {
+            position: absolute;
+            top: 50%;
+            margin-top: -8px;
+            right: 16px;
+            display: inline-block;
+            height: 16px;
+            color: #999;
+        }
     </style>
 </head>
 
-<body class="layui-layout-body layuimini-all">
-    <div class="layui-layout layui-layout-admin">
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md8">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md7">
+                            <div class="layui-card">
+                                <div class="layui-card-header"><i class="fa fa-warning icon"></i>数据信息</div>
+                                <div class="layui-card-body">
+                                    <div class="welcome-module">
+                                        <div class="layui-row layui-col-space10">
+                                            <div class="layui-col-xs6">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body">
+                                                        <div class="panel-title" style="padding-bottom: 23px;">
 
-        <div class="layui-header header">
-            <div class="layui-logo">
-            </div>
-            <a>
-                <div class="layuimini-tool"><i title="展开" class="fa fa-outdent" data-side-fold="1"></i></div>
-            </a>
+                                                            <h5>上次登录的时间</h5>
+                                                        </div>
+                                                        <div class="panel-content">
+                                                            <h2 class="no-margins" id="lasttime"></h2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-col-xs6">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body">
+                                                        <div class="panel-title" style="padding-bottom: 23px;">
 
-            <ul class="layui-nav layui-layout-left layui-header-menu layui-header-pc-menu mobile layui-hide-xs">
-            </ul>
-            <ul class="layui-nav layui-layout-left layui-header-menu mobile layui-hide-sm">
-                <li class="layui-nav-item">
-                    <a href="javascript:;"><i class="fa fa-list-ul"></i> 选择模块</a>
-                    <dl class="layui-nav-child layui-header-mini-menu">
-                    </dl>
-                </li>
-            </ul>
+                                                            <h5>上次登录的地点</h5>
+                                                        </div>
+                                                        <div class="panel-content">
+                                                            <h1 class="no-margins" id="lastaddress"></h1>
 
-            <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item">
-                    <a href="javascript:;" data-refresh="刷新"><i class="fa fa-refresh"></i></a>
-                </li>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-col-xs6">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body">
+                                                        <div class="panel-title" style="padding-bottom: 23px;">
+                                                            <h5>会议总数量</h5>
+                                                        </div>
+                                                        <div class="panel-content">
+                                                            <h1 class="no-margins" id="meetingcount"></h1>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-col-xs6">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body">
+                                                        <div class="panel-title" style="padding-bottom: 23px;">
+                                                            <h5>人员总数量</h5>
+                                                        </div>
+                                                        <div class="panel-content">
+                                                            <h1 class="no-margins" id="personcount"></h1>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md7">
+                            <div class="layui-card">
+                                <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>快捷入口
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="welcome-module">
+                                        <div class="layui-row layui-col-space10 layuimini-qiuck">
+                                            <div class="layui-col-xs3 layuimini-qiuck-module">
+                                                <a href="javascript:;" data-iframe-tab="pages/useradd.html"
+                                                    data-title="用户添加" data-icon="fa fa-window-maximize">
+                                                    <i class="fa fa-leaf"></i>
+                                                    <cite>用户添加</cite>
+                                                </a>
+                                            </div>
+                                            <div class="layui-col-xs3 layuimini-qiuck-module">
+                                                <a href="javascript:;" data-iframe-tab="pages/user.html"
+                                                    data-title="用户列表" data-icon="fa fa-gears">
+                                                    <i class="fa fa-street-view"></i>
+                                                    <cite>用户列表</cite>
+                                                </a>
+                                            </div>
+                                            <div class="layui-col-xs3 layuimini-qiuck-module">
+                                                <a href="javascript:;" data-iframe-tab="page/slog.html"
+                                                    data-title="日志查看" data-icon="fa fa-file-text">
+                                                    <i class="fa fa-inbox"></i>
+                                                    <cite>日志查看</cite>
+                                                </a>
+                                            </div>
+                                            <div class="layui-col-xs3 layuimini-qiuck-module">
+                                         
 
-                <li class="layui-nav-item layuimini-setting">
-                    <a href="javascript:;">
-                        <div id="username"></div>
-                    </a>
-                    <dl class="layui-nav-child">
-                    
-                        <dd>
-                            <a href="javascript:;" data-iframe-tab="pages/user-password.html" data-title="修改密码"
-                                data-icon="fa fa-gears">修改密码</a>
-                        </dd>
-                        <dd>
-                            <a href="#" class="login-out" id="logout">退出登录</a>
-                        </dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item layuimini-select-bgcolor mobile layui-hide-xs">
-                    <a href="javascript:;" data-bgcolor="配色方案"><i class="fa fa-ellipsis-v"></i></a>
-                </li>
-            </ul>
-        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-        <div class="layui-side layui-bg-black">
-            <div class="layui-side-scroll layui-left-menu">
-            </div>
-        </div>
+                        </div>
 
-        <div class="layui-body">
-            <div class="layui-tab" lay-filter="layuiminiTab" id="top_tabs_box">
-                <ul class="layui-tab-title" id="top_tabs">
-                    <li class="layui-this" id="layuiminiHomeTabId" lay-id=""></li>
-                </ul>
-                <ul class="layui-nav closeBox">
-                    <li class="layui-nav-item">
-                        <a href="javascript:;"> <i class="fa fa-dot-circle-o"></i>操作</a>
-                        <dl class="layui-nav-child">
-                            <dd><a href="javascript:;" data-page-close="other"><i class="fa fa-window-close"></i>
-                                    关闭其他</a></dd>
-                            <dd><a href="javascript:;" data-page-close="all"><i class="fa fa-window-close-o"></i>
-                                    关闭全部</a></dd>
-                        </dl>
-                    </li>
-                </ul>
-                <div class="layui-tab-content clildFrame">
-                    <div id="layuiminiHomeTabIframe" class="layui-tab-item layui-show">
                     </div>
                 </div>
+
+                
             </div>
         </div>
+        <script src="../js/cookieUtils.js" charset="utf-8"></script>
+        <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+        <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+        <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 
-    </div>
+        <script>
+            layui.use(['layer', 'layuimini'], function () {
+                var $ = layui.jquery,
+                    layer = layui.layer,
+                    layuimini = layui.layuimini
 
-    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
-    <script src="lib/layui-v2.5.4/layui.js?v=1.0.4" charset="utf-8"></script>
-    <script src="js/lay-config.js?v=1.0.4" charset="utf-8"></script>
-    <script src="js/cookieUtils.js" charset="utf-8"></script>
-    <script>
-        layui.use(['element', 'layer', 'layuimini'], function () {
-            var $ = layui.jquery,
-                element = layui.element,
-                layer = layui.layer;
-            var remember = readCookie("remember");
-            if (remember != null && remember != "") {
-                $.ajax({
-                    type: "GET",
-                    url: "http://api.wukaka.com/isLife",
-                    crossDomain: true, //设置跨域为true
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) { 
-                        if (data.code === 200) {
-                            location.reload();
-                        }
-                    }
-                })
-            }
-
-
+            });
 
             var username = readCookie("username");
 
-            $("#username").html(username);
-            //  请求菜单
+            if (username == null || username == "") {
+                window.location.href = "../login.html";
+            }
             $.ajax({
                 type: "GET",
-                url: "http://api.wukaka.com/menu",
+                url: "http://api.wukaka.com/user/" + username + "",
                 dataType: "json",
                 crossDomain: true, //设置跨域为true
                 xhrFields: {
                     withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
                 },
-
                 success: function (data) {
+
                     if (data.code === 200) {
-                        var json = data.data.menu;
-                        var _jsonmeau = json.substr(0, json.length);
-                        var jsonmeau = $.parseJSON(_jsonmeau);
-                        layuimini.Customizeinit(jsonmeau);
-                    } else if (data.code > 2000 && data.code < 2010) {
-                        layer.msg(data.errorMsg, {
-                            time: 1000,
-                            icon: 2
-                        }, function () {
-                            window.location = 'login.html';
-                        });
+                        $("#lasttime").html(data.data.lasttime);
+                        $("#lastaddress").html(data.data.address);
+                        $("#meetingcount").html(data.data.meetingcount);
+                        $("#personcount").html(data.data.personcount);
                     } else {
-                        layer.msg(data.errorMsg, {
-                            time: 1000,
-                            icon: 2
-                        })
+                        layer.msg(data.errorMsg);
                     }
                 }
 
             })
-
-            $('.login-out').on("click", function () {
-                $.ajax({
-                    type: "GET",
-                    url: "http://api.wukaka.com/logout",
-                    dataType: "json",
-                    crossDomain: true, //设置跨域为true
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) {
-                        if (data.code === 200) {
-                            layer.msg('退出登录成功', {
-                                time: 1000
-                            }, function () {
-                                window.location = 'login.html';
-                            });
-                        } else {
-                            layer.msg(data.message, {
-                                time: 1000,
-                                icon: 2
-                            })
-                        }
-                    }
-
-                })
-
-            });
-
-        });
-    </script>
+        </script>
 </body>
 
 </html>
