@@ -61,7 +61,7 @@
                 table = layui.table;
             table.render({
                 elem: '#currentTableId',
-                url: 'http://api.wukaka.com/log',
+                url: 'http://api.wukaka.com/log/all',
                 loading: "true",
                 cols: [
                     [{
@@ -77,8 +77,21 @@
                             align: "center"
                         },
                         {
+                            field: 'user',
+                            width: 100,
+
+                            title: '用户',
+                            align: "center"
+                        },
+                        {
                             field: 'name',
                             title: '行为',
+                            align: "center"
+                        },
+                        {
+                            field: 'requesttype',
+                            width: 100,
+                            title: '请求方式',
                             align: "center"
                         },
                         {

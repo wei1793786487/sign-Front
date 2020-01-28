@@ -100,11 +100,11 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">信息</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="meetingName" autocomplete="off" class="layui-input">
+                                    <input type="text" name="meetingName" id=search autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                                <a class="layui-btn" lay-submit=""  lay-filter="data-search-btn">搜索</a>
                             </div>
                         </div>
                     </form>
@@ -121,7 +121,7 @@
         </div>
     </div>
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
-
+    
     <script type="text/html" id="xuhao">
         {{d.LAY_TABLE_INDEX+1}}
     </script>
@@ -224,7 +224,6 @@
                 }
             });
 
-           
             // 自定义验证规则
             form.verify({
                 meeting_name: function (value) {
@@ -250,7 +249,6 @@
             });
 
 
-
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
 
@@ -260,74 +258,16 @@
                         curr: 1
                     },
                     where: {
-                        meetingName: data.field.meetingName
+                        search:$("#search").val()
                     }
                 }, 'data');
                 return false;
             });
 
-
-
             // 监听删除操作
             $(".data-delete-btn").on("click", function () {
-
-
-                layer.confirm('真的删除行么', function (index) {
-
-
-                    var checkStatus = table.checkStatus('currentTableId'),
-                        data = checkStatus.data;
-
-                    layer.msg('删除中', {
-                        icon: 16,
-                        shade: 0.01
-                    });
-
-
-                    var arr = []; //存储id的数组
-                    data.forEach(function (item) {
-                        arr.push(item.id);
-                    })
-
-                    if (arr.length == 0) {
-                        layer.msg("请先选择", {
-                            time: 1000,
-                        })
-                        return false;
-                    }
-
-                    $.ajax({
-                        type: "DELETE",
-                        url: "http://api.wukaka.com/meeting",
-                        data: {
-                            ids: arr
-                        },
-                        crossDomain: true,
-                        xhrFields: {
-                            withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                        },
-                        success: function (data) {
-                            if (data.code === 200) {
-
-                                layer.msg(data.data, {
-                                    time: 1000,
-                                }, function () {
-                                    location.reload();
-                                });
-
-                            } else {
-                                layer.msg(data.message, {
-                                    time: 1000,
-                                    icon: 2
-                                })
-                            }
-                        }
-                    })
-                })
-
-
-
-
+               
+                layer.alert("不支持删除，不想该账号登录请设置账号不可用")
 
             });
 
