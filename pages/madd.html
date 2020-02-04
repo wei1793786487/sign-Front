@@ -11,21 +11,64 @@
     <link rel="stylesheet" href="../css/public.css" media="all">
     <style type="text/css">
         .layui-laydate-content>.layui-laydate-list {
-                padding-bottom: 0px;
-                overflow: hidden;
-            }
-            .layui-laydate-content>.layui-laydate-list>li{
-                width:50%
-            }
-    
-            .merge-box .scrollbox .merge-list {
-                padding-bottom: 5px;
-            }
-    
+            padding-bottom: 0px;
+            overflow: hidden;
+        }
+
+        .layui-laydate-content>.layui-laydate-list>li {
+            width: 50%
+        }
+
+        .merge-box .scrollbox .merge-list {
+            padding-bottom: 5px;
+        }
+
+        .BMap_cpyCtrl {
+            display: none;
+        }
+
+        .anchorBL {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
+
+    <div class="layuimini-container" style="display: none;" id="ditu">
+        <div class="layuimini-main">
+
+            <fieldset class="layui-elem-field layuimini-search">
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">地点名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="username" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-inline">
+                                <a class="layui-btn" id="search">搜索</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+
+            <div id="allmap" style="height:400px;width:100%;"></div>
+
+
+
+        </div>
+    </div>
+
+
+
+
+
     <div class="layuimini-container">
         <div class="layuimini-main">
 
@@ -43,8 +86,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议地点</label>
                     <div class="layui-input-block">
-                        <input type="text" name="mettingAddress" lay-verify="meeting_advice" autocomplete="off"
-                            placeholder="请输入会议地点" class="layui-input">
+                        <input type="text" name="mettingAddress" id="address" lay-verify="meeting_advice"
+                            autocomplete="off" placeholder="请选择会议地点" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -57,15 +100,15 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">开始时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="startTime" id="stime" readonly=true lay-verify="meeting_time" placeholder="请输入会议的时间"
-                            class="layui-input">
+                        <input type="text" name="startTime" id="stime" readonly=true lay-verify="meeting_time"
+                            placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">结束时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="endTime" id="etime" readonly=true lay-verify="meeting_time" placeholder="请输入会议的时间"
-                            class="layui-input">
+                        <input type="text" name="endTime" id="etime" readonly=true lay-verify="meeting_time"
+                            placeholder="请输入会议的时间" class="layui-input">
                     </div>
                 </div>
 
@@ -92,15 +135,19 @@
 
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
     <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=0H0UoHGaGfLCRaBoXStO5DfbvDO30TOg">
+    </script>
     <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
     <script>
-         function checkPhone(data) {
-                if ((/^1[3456789]\d{9}$/.test(data))) {
-                    return true;
-                }
+        function checkPhone(data) {
+            if ((/^1[3456789]\d{9}$/.test(data))) {
+                return true;
             }
+        }
         layui.use(['form', 'layedit', 'laydate'], function () {
 
+
+            var address = ""
             var form = layui.form,
                 layer = layui.layer,
                 layedit = layui.layedit,
@@ -122,10 +169,10 @@
                     if (val.length == "") {
                         return "联系人方式不能为空";
                     }
-                    if(!checkPhone(val)){
+                    if (!checkPhone(val)) {
                         return "手机号格式不正确";
                     }
-                    
+
                 },
                 meeting_time: function (val) {
                     if (val.length == "") {
@@ -133,6 +180,27 @@
                     }
                 },
             });
+
+            $("#address").click(function () {
+
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 0,
+                    btn: ['确定选择'],
+                    area: ['60%', '80%'],
+                    shadeClose: true,
+                    skin: 'yourclass',
+                    content: $("#ditu"),
+                    yes: function () {
+                        alert(address)
+                        $("#address").val(address);
+                        layer.closeAll();
+                    }
+                });
+
+
+            })
 
             //日期时间选择器
             laydate.render({
@@ -147,17 +215,69 @@
                 format: 'yyyy-MM-dd HH:mm'
             });
 
+            //百度地图
+            $("#search").click(
+                function () {
+                    // 百度地图API功能
+                    var map = new BMap.Map("allmap", {
+                        enableMapClick: false
+                    });
+                    var point = new BMap.Point(116.331398, 39.897445);
+                    map.centerAndZoom(point, 12);
+                    map.enableScrollWheelZoom(true);
+                    var geoc = new BMap.Geocoder();
+
+
+                    map.addEventListener("click", function (e) {
+                        //清除之前点击坐标
+                        map.clearOverlays();
+                        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度     
+                        var pt = e.point;
+                        var lng = pt.lng
+                        var lat = pt.lat
+                        // 新建点击坐标
+                        var marker = new BMap.Marker(new BMap.Point(lng, lat));
+                        //设置
+                        map.addOverlay(marker);
+
+                        console.log(pt)
+                        geoc.getLocation(pt, function (rs) {
+                            //addressComponents对象可以获取到详细的地址信息
+                            var addComp = rs.addressComponents;
+                            
+                            console.log(addComp);
+                            //获取地址
+                            
+                            if(addComp.province===addComp.city){
+                                address = addComp.province + "  "+ addComp
+                                .district + "  "+ addComp.street + "  "+ addComp.streetNumber
+                            }else{
+                                address = addComp.province + "  "+addComp.city + "  "+ addComp
+                                .district + "  "+ addComp.street + "  "+ addComp.streetNumber
+                            }
+                           
+                        });
+                    });
+
+
+
+                }
+            )
+
+
+
+
             //监听提交
             form.on('submit(demo1)', function (data) {
                 layer.msg('添加中', {
-                        icon: 16,
-                        shade: 0.01
-                    });
+                    icon: 16,
+                    shade: 0.01
+                });
                 var data = data.field
                 $.ajax({
                     type: "POST",
                     url: "http://api.wukaka.com/meeting",
-                    data:data,
+                    data: data,
                     crossDomain: true,
                     xhrFields: {
                         withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
@@ -168,14 +288,14 @@
                             layer.msg(data.data, {
                                 time: 1000,
                             }, function () {
-                              location.reload();
+                                location.reload();
                             });
 
-                        }else{
+                        } else {
                             layer.msg(data.message, {
-                            time: 1000,
-                            icon: 2
-                        })
+                                time: 1000,
+                                icon: 2
+                            })
                         }
                     }
                 })
