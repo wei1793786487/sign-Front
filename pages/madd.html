@@ -43,15 +43,9 @@
                 <div style="margin: 10px 10px 10px 10px">
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <label class="layui-form-label">地点名称</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="username" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-
-                            <div class="layui-inline">
-                                <a class="layui-btn" id="search">搜索</a>
+                            <label class="layui-form-label">请输入地点</label>
+                            <div class="layui-input-block">
+                                <div id="shear"></div>
                             </div>
                         </div>
                     </form>
@@ -76,6 +70,9 @@
                 <legend>新建会议</legend>
             </fieldset>
             <form class="layui-form" action="" lay-filter="example">
+                <input name="lng" id="lng" style="display: none;">
+                <input name="lat" id="lat" style="display: none;">
+
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议名称</label>
                     <div class="layui-input-block">
@@ -83,13 +80,23 @@
                             placeholder="请输入会议名称" class="layui-input">
                     </div>
                 </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">会议地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="meetingAddress" id="address" readonly lay-verify="meeting_advice"
+                            autocomplete="off" placeholder="请选择会议地点的具体地址" class="layui-input">
+                    </div>
+                </div>
+
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议地点</label>
                     <div class="layui-input-block">
-                        <input type="text" name="mettingAddress" id="address" lay-verify="meeting_advice"
-                            autocomplete="off" placeholder="请选择会议地点" class="layui-input">
+                        <input type="text" name="addressName" id="addressName" lay-verify="address_name"
+                            autocomplete="off" placeholder="请输入会议地点名称" class="layui-input">
                     </div>
                 </div>
+
                 <div class="layui-form-item">
                     <label class="layui-form-label">联系方式</label>
                     <div class="layui-input-block">
@@ -135,6 +142,8 @@
 
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
     <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../lib/layer/xm-select.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=0H0UoHGaGfLCRaBoXStO5DfbvDO30TOg">
     </script>
     <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
@@ -148,6 +157,8 @@
 
 
             var address = ""
+            var lng = ""
+            var lat = ""
             var form = layui.form,
                 layer = layui.layer,
                 layedit = layui.layedit,
@@ -179,6 +190,11 @@
                         return "日期不能为空";
                     }
                 },
+                address_name: function (val) {
+                    if (val.length == "") {
+                        return "会议的地址的名称不能为空";
+                    }
+                }
             });
 
             $("#address").click(function () {
@@ -193,8 +209,6 @@
                     skin: 'yourclass',
                     content: $("#ditu"),
                     yes: function () {
-                        alert(address)
-                        $("#address").val(address);
                         layer.closeAll();
                     }
                 });
@@ -215,55 +229,109 @@
                 format: 'yyyy-MM-dd HH:mm'
             });
 
+
+
+
+
+
             //百度地图
-            $("#search").click(
-                function () {
-                    // 百度地图API功能
-                    var map = new BMap.Map("allmap", {
-                        enableMapClick: false
+            function initMap(lng, lat) {
+                // 百度地图API功能
+                var map = new BMap.Map("allmap", {
+                    enableMapClick: false
+                });
+                var point = new BMap.Point(lng, lat);
+                map.centerAndZoom(point, 18);
+                map.enableScrollWheelZoom(true);
+                var geoc = new BMap.Geocoder();
+
+                // 新建点击坐标
+                var marker = new BMap.Marker(new BMap.Point(lng, lat));
+                //设置
+                map.addOverlay(marker);
+
+
+                map.addEventListener("click", function (e) {
+                    //清除之前点击坐标
+                    map.clearOverlays();
+                    //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度     
+                    var pt = e.point;
+
+                    // 更新坐标点
+                    var marker = new BMap.Marker(new BMap.Point(pt.lng, pt.lat));
+                    map.addOverlay(marker);
+                    //点击了之后更新点
+                    $("#lng").val(pt.lng);
+                    $("#lat").val(pt.lat);
+
+                    geoc.getLocation(pt, function (rs) {
+                        //addressComponents对象可以获取到详细的地址信息
+                        var addComp = rs.addressComponents;
+
+                        // console.log(addComp);
+                        //获取地址
+
+                        if (addComp.province === addComp.city) {
+                            address = addComp.province + "  " + addComp
+                                .district + "  " + addComp.street + "  " + addComp
+                                .streetNumber
+                        } else {
+                            address = addComp.province + "  " + addComp.city +
+                                "  " + addComp
+                                .district + "  " + addComp.street + "  " + addComp
+                                .streetNumber
+                        }
+                        //点击了更新地点
+                        $("#address").val(address);
+
                     });
-                    var point = new BMap.Point(116.331398, 39.897445);
-                    map.centerAndZoom(point, 12);
-                    map.enableScrollWheelZoom(true);
-                    var geoc = new BMap.Geocoder();
+                });
+
+            }
 
 
-                    map.addEventListener("click", function (e) {
-                        //清除之前点击坐标
-                        map.clearOverlays();
-                        //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度     
-                        var pt = e.point;
-                        var lng = pt.lng
-                        var lat = pt.lat
-                        // 新建点击坐标
-                        var marker = new BMap.Marker(new BMap.Point(lng, lat));
-                        //设置
-                        map.addOverlay(marker);
-
-                        console.log(pt)
-                        geoc.getLocation(pt, function (rs) {
-                            //addressComponents对象可以获取到详细的地址信息
-                            var addComp = rs.addressComponents;
-                            
-                            console.log(addComp);
-                            //获取地址
-                            
-                            if(addComp.province===addComp.city){
-                                address = addComp.province + "  "+ addComp
-                                .district + "  "+ addComp.street + "  "+ addComp.streetNumber
-                            }else{
-                                address = addComp.province + "  "+addComp.city + "  "+ addComp
-                                .district + "  "+ addComp.street + "  "+ addComp.streetNumber
-                            }
-                           
-                        });
+            //搜索选择器
+            xmSelect.render({
+                el: '#shear',
+                radio: true,
+                filterable: true,
+                remoteSearch: true,
+                autoRow: true,
+                clickClose: true,
+                disabled: true,
+                remoteMethod: function (val, cb, show) {
+                    //这里如果val为空, 则不触发搜索
+                    if (!val) {
+                        return cb([]);
+                    }
+                    //这里引入了一个第三方插件axios, 相当于$.ajax
+                    axios({
+                        method: 'get',
+                        url: 'http://127.0.0.1:8080/findAddress',
+                        params: {
+                            keyword: val,
+                        }
+                    }).then(response => {
+                        var res = response.data;
+                        cb(res.data)
+                    }).catch(err => {
+                        cb([]);
                     });
-
-
-
-                }
-            )
-
+                },
+                on: function (data) {
+                    var arr = data.arr;
+                    if (arr.length != 0) {
+                        var lng = arr[0].location.lng;
+                        var lat = arr[0].location.lat;
+                        var name = arr[0].name;
+                        initMap(lng, lat)
+                        $("#address").val(arr[0].address);                        
+                        $("#addressName").val(name);
+                        $("#lng").val(lng);
+                        $("#lat").val(lat);
+                    }
+                },
+            })
 
 
 
