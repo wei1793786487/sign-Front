@@ -23,10 +23,46 @@
         .merge-box .scrollbox .merge-list {
             padding-bottom: 5px;
         }
+
+        .BMap_cpyCtrl {
+            display: none;
+        }
+
+        .anchorBL {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
+
+
+
+    <div class="layuimini-container" style="display: none;" id="ditu">
+        <div class="layuimini-main">
+
+            <fieldset class="layui-elem-field layuimini-search">
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">请输入地点</label>
+                            <div class="layui-input-block">
+                                <div id="shear"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+
+            <div id="allmap" style="height:400px;width:100%;"></div>
+
+
+
+        </div>
+    </div>
+
+
 
     <div class="layuimini-container" style="display:none;" id="modify">
         <div class="layuimini-main">
@@ -35,6 +71,8 @@
             </fieldset>
 
             <form class="layui-form" action="" id=modifyform lay-filter="modify">
+                <input name="lng" id="lng" style="display: none;">
+                <input name="lat" id="lat" style="display: none;">
                 <input type="text" name="id" id="id" style="display: none;">
                 <div class="layui-form-item">
                     <label class="layui-form-label">会议名称</label>
@@ -44,10 +82,18 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label">会议地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="meetingAddress" id="address" readonly lay-verify="meeting_advice"
+                            autocomplete="off" placeholder="请选择会议地点的具体地址" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <label class="layui-form-label">会议地点</label>
                     <div class="layui-input-block">
-                        <input type="text" name="mettingAddress" lay-verify="meeting_advice" autocomplete="off"
-                            placeholder="请输入会议地点" class="layui-input">
+                        <input type="text" name="addressName" id="addressName" lay-verify="address_name"
+                            autocomplete="off" placeholder="请输入会议地点名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -124,13 +170,16 @@
         </div>
     </div>
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../lib/layer/xm-select.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=0H0UoHGaGfLCRaBoXStO5DfbvDO30TOg"></script>
     <script type="text/html" id="xuhao">
         {{d.LAY_TABLE_INDEX+1}}
     </script>
 
     <script>
         layui.use(['form', 'table', 'laydate'], function () {
+            var address = ""
             var $ = layui.jquery,
                 form = layui.form,
                 laydate = layui.laydate,
@@ -166,20 +215,20 @@
                         },
                         {
                             field: 'meetingAddress',
-                            width: 210,
+                            width: 250,
                             title: '会议地址',
                             align: "center"
                         },
-                        
+
                         {
                             field: 'startTime',
-                            width: 200,
+                            width: 180,
                             title: '开始时间',
                             align: "center"
                         },
                         {
                             field: 'endTime',
-                            width: 200,
+                            width: 180,
                             title: '结束时间',
                             align: "center"
                         },
@@ -206,6 +255,131 @@
                     none: '无数据'
                 }
             });
+
+
+
+            $("#address").click(function () {
+
+                layer.open({
+                    type: 1,
+                    title: false,
+                    closeBtn: 0,
+                    btn: ['确定选择'],
+                    area: ['60%', '80%'],
+                    shadeClose: true,
+                    skin: 'yourclass',
+                    content: $("#ditu"),
+                    yes: function () {
+                        layer.close(layer.index);
+                    }
+                });
+
+
+            })
+
+
+
+
+            //百度地图
+            function initMap(lng, lat) {
+                // 百度地图API功能
+                var map = new BMap.Map("allmap", {
+                    enableMapClick: false
+                });
+                var point = new BMap.Point(lng, lat);
+                map.centerAndZoom(point, 18);
+                map.enableScrollWheelZoom(true);
+                var geoc = new BMap.Geocoder();
+
+                // 新建点击坐标
+                var marker = new BMap.Marker(new BMap.Point(lng, lat));
+                //设置
+                map.addOverlay(marker);
+
+
+                map.addEventListener("click", function (e) {
+                    //清除之前点击坐标
+                    map.clearOverlays();
+                    //通过点击百度地图，可以获取到对应的point, 由point的lng、lat属性就可以获取对应的经度纬度     
+                    var pt = e.point;
+
+                    // 更新坐标点
+                    var marker = new BMap.Marker(new BMap.Point(pt.lng, pt.lat));
+                    map.addOverlay(marker);
+                    //点击了之后更新点
+                    $("#lng").val(pt.lng);
+                    $("#lat").val(pt.lat);
+
+                    geoc.getLocation(pt, function (rs) {
+                        //addressComponents对象可以获取到详细的地址信息
+                        var addComp = rs.addressComponents;
+
+                        // console.log(addComp);
+                        //获取地址
+
+                        if (addComp.province === addComp.city) {
+                            address = addComp.province + "  " + addComp
+                                .district + "  " + addComp.street + "  " + addComp
+                                .streetNumber
+                        } else {
+                            address = addComp.province + "  " + addComp.city +
+                                "  " + addComp
+                                .district + "  " + addComp.street + "  " + addComp
+                                .streetNumber
+                        }
+                        //点击了更新地点
+                        $("#address").val(address);
+
+                    });
+                });
+
+            }
+
+
+            //搜索选择器
+            xmSelect.render({
+                el: '#shear',
+                radio: true,
+                filterable: true,
+                remoteSearch: true,
+                autoRow: true,
+                clickClose: true,
+                disabled: true,
+                remoteMethod: function (val, cb, show) {
+                    //这里如果val为空, 则不触发搜索
+                    if (!val) {
+                        return cb([]);
+                    }
+                    //这里引入了一个第三方插件axios, 相当于$.ajax
+                    axios({
+                        method: 'get',
+                        url: 'http://127.0.0.1:8080/findAddress',
+                        params: {
+                            keyword: val,
+                        }
+                    }).then(response => {
+                        var res = response.data;
+                        cb(res.data)
+                    }).catch(err => {
+                        cb([]);
+                    });
+                },
+                on: function (data) {
+                    var arr = data.arr;
+                    if (arr.length != 0) {
+                        var lng = arr[0].location.lng;
+                        var lat = arr[0].location.lat;
+                        var name = arr[0].name;
+                        initMap(lng, lat)
+                        $("#address").val(arr[0].address);
+                        $("#addressName").val(name);
+                        $("#lng").val(lng);
+                        $("#lat").val(lat);
+                    }
+                },
+            })
+
+
 
             //日期时间选择器
             laydate.render({
@@ -244,6 +418,11 @@
                         return "日期不能为空";
                     }
                 },
+                address_name:function(){
+                    if (val.length == "") {
+                        return "地点名字不能为空";
+                    }
+                }
             });
 
 
@@ -322,10 +501,6 @@
                     })
                 })
 
-
-
-
-
             });
 
 
@@ -344,7 +519,8 @@
                             form.val('modify', {
                                 "id": data["id"],
                                 "meetingName": data["meetingName"],
-                                "mettingAddress": data["mettingAddress"],
+                                "addressName": data["addressName"],
+                                "meetingAddress": data["meetingAddress"],
                                 "meetingPhone": data["meetingPhone"],
                                 "startTime": data["startTime"],
                                 "endTime": data["endTime"],
