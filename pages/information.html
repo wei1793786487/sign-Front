@@ -25,15 +25,24 @@
 
 
             <div style="text-align:center">
-                <h1 id="name"><strong></strong></h1>
+                <h1 ><strong id="meeting"> ad</strong></h1 >
             </div>
             <br>
             <br>
             <div class="layui-form layuimini-form">
                 <div class="layui-form-item">
-                    <label class="layui-form-label ">会议地点</label>
+                    <label class="layui-form-label">会议地址</label>
                     <div class="layui-input-block">
-                        <input type="text" id="address" value="" class="layui-input" readonly=true>
+                        <input type="text" name="meetingAddress" id="address" readonly lay-verify="meeting_advice"
+                            autocomplete="off" placeholder="请选择会议地点的具体地址" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">会议地点</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="addressName" id="addressName" lay-verify="address_name"
+                            autocomplete="off" placeholder="请输入会议地点名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -108,9 +117,9 @@
                         if (data.code === 200) {
 
                             var information = data.data;
-                            $("#name").val(information.meetingName);
-
-                            $("#address").attr("value", information.mettingAddress);
+                            $("h1").html(information.meetingName);
+                            $("#address").attr("value", information.meetingAddress);
+                            $("#addressName").attr("value", information.addressName);
 
                             $("#stime").attr("value", information.startTime);
 
