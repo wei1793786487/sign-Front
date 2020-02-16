@@ -82,8 +82,10 @@
                         area: ['500px', '500px'],
                         shade: 0,
                         maxmin: true,
-                        content: $('#information')
-
+                        content: $('#information'),
+                        cancel: function () {
+                                $("#information").html("")
+                            }
                     });
                 }
 
