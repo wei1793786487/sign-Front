@@ -130,7 +130,7 @@
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-password" for="password"></label>
                         <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                            autocomplete="off" class="layui-input" >
+                            autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-icon layui-icon-vercode" for="captcha"></label>
@@ -154,13 +154,16 @@
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
     <script src="../lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
     <script src="js/cookieUtils.js" charset="utf-8"></script>
+    <script src="js/p-ajax.js" charset="utf-8"></script>
+    <script src="network/network.js" charset="utf-8"></script>
+
+
     <script>
         layui.use(['form'], function () {
             var form = layui.form,
                 layer = layui.layer;
             var captcha = $("#captchaPic");
             var imageurl = "http://api.wukaka.com/verifyCode.jpg?" + new Date().getTime();
-
 
             // 登录过期的时候，跳出ifram框架
             if (top.location != self.location) top.location = self.location;
@@ -181,7 +184,7 @@
             }
 
             var remember = readCookie("remember-me");
-         
+
             if (remember != null && remember != "") {
                 window.location = 'pages/index.html';
             }
@@ -202,28 +205,17 @@
                     return false;
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "http://api.wukaka.com/login",
-                    data: data,
-                    dataType: "json",
-                    crossDomain: true, //设置跨域为true
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) {
-                        if (data.success === true) {
-                            layer.msg('登录成功', {
-                                time: 1000,
-                            }, function () {
-                                window.location = 'pages/index.html';
-                            });
-                        } else {
-                            captcha.prop("src", imageurl);
-                            layer.msg(data.errorMsg);
-                        }
+                login(data).then(res => {
+                    if (res.success === true) {
+                        layer.msg('登录成功', {
+                            time: 1000,
+                        }, function () {
+                            window.location = 'pages/index.html';
+                        });
+                    } else {
+                        captcha.prop("src", imageurl);
+                        layer.msg(data.errorMsg);
                     }
-
                 })
                 return false;
             });
