@@ -177,13 +177,13 @@
             var username = readCookie("username");
 
             if (username != "") {
-                window.location = 'index.html';
+                window.location = 'pages/index.html';
             }
 
             var remember = readCookie("remember-me");
          
             if (remember != null && remember != "") {
-                window.location = 'index.html';
+                window.location = 'pages/index.html';
             }
 
             // // 进行登录操作
@@ -216,7 +216,7 @@
                             layer.msg('登录成功', {
                                 time: 1000,
                             }, function () {
-                                window.location = 'index.html';
+                                window.location = 'pages/index.html';
                             });
                         } else {
                             captcha.prop("src", imageurl);
