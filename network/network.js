@@ -40,4 +40,9 @@ function add_user(data){
         data: data,
     })
 }
-
+//退出登录
+function logout(){
+    return request({
+        url: url + "logout",
+    })
+}
