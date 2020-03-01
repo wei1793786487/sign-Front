@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <script src="js/axios.js" charset="utf-8"></script>
+<script src="network/network.js" charset="utf-8"></script>
 <script>
     // const d= life().then();
     // console.log(d)
-    //todo 这里不知道为啥不能使用封装函数 只能使用原始的
-    const url = "http://api.wukaka.com/isLife";
+    //todo 这里不知道为啥不能使用封装函数 只能使用原始的 这里为了全局就修改一个url，这里引用network的url
     axios({
         method: 'get',
-        url: url,
+        url: url+"isLife",
         crossDomain: true,
         withCredentials: true
     }).then(res => {

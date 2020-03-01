@@ -36,8 +36,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" lay-verify="username" autocomplete="off"
-                            placeholder="请输入用户登录姓名" class="layui-input">
+                        <input type="text" id="username" name="username" lay-verify="username" onchange="checkname()"
+                            autocomplete="off" placeholder="请输入用户登录姓名" class="layui-input">
+                        <tip></tip>
                     </div>
                 </div>
                 <div class="layui-form-item" pane="">
@@ -50,8 +51,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">联系方式</label>
                     <div class="layui-input-block">
-                        <input type="text" name="phone" lay-verify="phone" autocomplete="off"
-                            placeholder="请输入用户联系方式" class="layui-input">
+                        <input type="text" name="phone" lay-verify="phone" autocomplete="off" placeholder="请输入用户联系方式"
+                            class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -85,14 +86,33 @@
 
     <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
     <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
     <script>
+        let isHava = true;
+
         function checkPhone(data) {
             if ((/^1[3456789]\d{9}$/.test(data))) {
                 return true;
             }
         }
 
+        function checkname() {
+            let value = $("#username").val();
+            check_user(value).then(res => {
+                if (res.code === 200) {
+                    //不存在
+                    isHava = false;
+                } else {
+                    isHava = true;
+                    layer.msg("该用户已经存在", {
+                        time: 1000,
+                        icon: 2
+                    })
+                }
+            })
+        }
         layui.use(['form', 'layedit', 'laydate'], function () {
 
             var form = layui.form,
@@ -105,31 +125,6 @@
                 username: function (value) {
                     if (value.length == "") {
                         return '用户名不能为空';
-                    } else {
-                        //检验是不是有重复
-                        var message = "";
-                        $.ajax({
-                            type: "GET",
-                            url: "http://api.wukaka.com/user/isHave",
-                            data: {
-                                username: value
-                            },
-                            crossDomain: true,
-                            async: false,
-                            xhrFields: {
-                                withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                            },
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    //不存在
-                                } else {
-                                    message = data.message;
-                                }
-                            }
-                        })
-                        if (message != "") {
-                            return message;
-                        }
                     }
                 },
                 phone: function (val) {
@@ -160,6 +155,13 @@
                 var p1 = $("#user_password").val();
                 var p2 = $("#user_password2").val();
 
+                if(isHava){
+                    layer.msg("该账号已经存在", {
+                        time: 1000,
+                        icon: 2
+                    })
+                    return false;
+                }
                 if (p1 != p2) {
                     layer.msg("两次密码输入不一致", {
                         time: 1000,
@@ -172,30 +174,20 @@
                     shade: 0.01
                 });
                 var data = data.field
+               
+                add_user(data).then(res => {
+                    if (res.code === 200) {
+                        layer.msg(res.data, {
+                            time: 1000,
+                        }, function () {
+                            location.reload();
+                        });
 
-                $.ajax({
-                    type: "POST",
-                    url: "http://api.wukaka.com/user",
-                    data: data,
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true //默认情况下，标准的跨域请求是不会发送cookie的
-                    },
-                    success: function (data) {
-                        if (data.code === 200) {
-
-                            layer.msg(data.data, {
-                                time: 1000,
-                            }, function () {
-                                location.reload();
-                            });
-
-                        } else {
-                            layer.msg(data.message, {
-                                time: 1000,
-                                icon: 2
-                            })
-                        }
+                    } else {
+                        layer.msg(res.message, {
+                            time: 1000,
+                            icon: 2
+                        })
                     }
                 })
 
