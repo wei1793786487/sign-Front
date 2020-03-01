@@ -24,14 +24,15 @@ function get_user_info(username) {
     })
 }
 
-
+//查看用户是不存在
 function check_user(username){
     return request({
         url: url + "user/isHave",
         data: {username:username},
     })
 }
-
+ 
+//添加用户
 function add_user(data){
     return request({
         url: url + "user",
